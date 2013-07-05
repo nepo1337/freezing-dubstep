@@ -1,9 +1,12 @@
 #include <iostream>
-#include <SFML/System.hpp>
+#include "Editor.h"
 
 int main(int argc, char **argv)
 {
-   sf::Clock clock;
-   std::cout << clock.getElapsedTime().asSeconds()<<std::endl;
+    Editor editor;
+    editor.init();
+    
+    editor.run();
+    
     return 0;
 }

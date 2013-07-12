@@ -13,10 +13,10 @@ using namespace std;
 
 namespace GLSLShader
 {
-  enum GLSLShaderType
-  {
+enum GLSLShaderType
+{
     VERTEX,FRAGMENT,GEOMETRY,TESS_CONTROL,TESS_EVALUATION
-  };
+};
 };
 class GLSLProgram
 {
@@ -31,22 +31,22 @@ private:
     GLuint geoShadHandle;
     GLuint tessCShadHandle;
     GLuint tessEShadHandle;
-    
+
 public:
     GLSLProgram();
-	~GLSLProgram();
+    ~GLSLProgram();
     bool compileShaderFromFile(const char* fileName,GLSLShader::GLSLShaderType type);
     bool link();
     void use();
-    
+
     string log();
-    
+
     int getHandle();
     bool isLinked();
-    
+
     void bindAttribLocation(GLuint location, const char * name);
     void bindFragDataLocation(GLuint location, const char * name );
-    
+
     void setUniform(const char *name, float x, float y, float z);
     void setUniform(const char *name, const vec3 & v);
     void setUniform(const char *name, const vec4 & v);
@@ -59,8 +59,10 @@ public:
 
     void printActiveUniforms();
     void printActiveAttribs();
-    
+
     void printShaderCode();
+
+    string getShaderCode();
 };
 
 #endif // GLSLPROGRAM_H

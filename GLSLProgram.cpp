@@ -4,98 +4,98 @@
 
 GLSLProgram::GLSLProgram()
 {
-  this->linked=false;
-  this->handle=0;
-  this->shaderCode="";
-  fragShadHandle=0;
-  vertShadHandle=0;
-  geoShadHandle=0;
-  tessCShadHandle=0;
-  tessEShadHandle=0;
+    this->linked=false;
+    this->handle=0;
+    this->shaderCode="";
+    fragShadHandle=0;
+    vertShadHandle=0;
+    geoShadHandle=0;
+    tessCShadHandle=0;
+    tessEShadHandle=0;
 }
 
 GLSLProgram::~GLSLProgram()
 {
-	glDetachShader(handle, vertShadHandle);
-	glDetachShader(handle, fragShadHandle);
-	glDetachShader(handle, geoShadHandle);
-	glDetachShader(handle, tessCShadHandle);
-	glDetachShader(handle, tessEShadHandle);
-	glDeleteShader(fragShadHandle);
-	glDeleteShader(vertShadHandle);
-	glDeleteShader(geoShadHandle);
-	glDeleteShader(tessCShadHandle);
-	glDeleteShader(tessEShadHandle);
-	glDeleteProgram(handle);
+    glDetachShader(handle, vertShadHandle);
+    glDetachShader(handle, fragShadHandle);
+    glDetachShader(handle, geoShadHandle);
+    glDetachShader(handle, tessCShadHandle);
+    glDetachShader(handle, tessEShadHandle);
+    glDeleteShader(fragShadHandle);
+    glDeleteShader(vertShadHandle);
+    glDeleteShader(geoShadHandle);
+    glDeleteShader(tessCShadHandle);
+    glDeleteShader(tessEShadHandle);
+    glDeleteProgram(handle);
 }
 
 void GLSLProgram::printShaderCode()
 {
-  cout << this->shaderCode;
+    cout << this->shaderCode;
 }
 
 
 bool GLSLProgram::compileShaderFromFile(const char* fileName, GLSLShader::GLSLShaderType type)
 {
-  ifstream file;
-  file.open(fileName);
-  if(!file.is_open())
-  {
-    logString="File not found";
-    return false;
-  }
-  string line;
-  string shad="";
-  while(file.good())
-  {
-    getline(file,line);
-    shad+=line+"\n";
-  }
-  this->shaderCode=shad;
-  file.close();
-  
-  if(handle<=0)
-  {
-    handle=glCreateProgram();
-    if(handle==0)
+    ifstream file;
+    file.open(fileName);
+    if(!file.is_open())
     {
-      logString="Unable to create shader program.";
-      return false;
+        logString="File not found";
+        return false;
     }
-  }
-  
-  GLuint shaderHandle=0;
-  switch(type)
-  {
+    string line;
+    string shad="";
+    while(file.good())
+    {
+        getline(file,line);
+        shad+=line+"\n";
+    }
+    this->shaderCode=shad;
+    file.close();
+
+    if(handle<=0)
+    {
+        handle=glCreateProgram();
+        if(handle==0)
+        {
+            logString="Unable to create shader program.";
+            return false;
+        }
+    }
+
+    GLuint shaderHandle=0;
+    switch(type)
+    {
     case GLSLShader::VERTEX:
-      shaderHandle=glCreateShader(GL_VERTEX_SHADER);
-      vertShadHandle=shaderHandle;
-      break;
+        shaderHandle=glCreateShader(GL_VERTEX_SHADER);
+        vertShadHandle=shaderHandle;
+        break;
     case GLSLShader::FRAGMENT:
-      shaderHandle=glCreateShader(GL_FRAGMENT_SHADER);
-      fragShadHandle=shaderHandle;
-      break;
+        shaderHandle=glCreateShader(GL_FRAGMENT_SHADER);
+        fragShadHandle=shaderHandle;
+        break;
     case GLSLShader::GEOMETRY:
-      shaderHandle=glCreateShader(GL_GEOMETRY_SHADER);
-      geoShadHandle=shaderHandle;
-      break;
+        shaderHandle=glCreateShader(GL_GEOMETRY_SHADER);
+        geoShadHandle=shaderHandle;
+        break;
     case GLSLShader::TESS_CONTROL:
-      shaderHandle=glCreateShader(GL_TESS_CONTROL_SHADER);
-      tessCShadHandle=shaderHandle;
-      break;
+        shaderHandle=glCreateShader(GL_TESS_CONTROL_SHADER);
+        tessCShadHandle=shaderHandle;
+        break;
     case GLSLShader::TESS_EVALUATION:
-      shaderHandle=glCreateShader(GL_TESS_EVALUATION_SHADER);
-      tessEShadHandle=shaderHandle;
-      break;
+        shaderHandle=glCreateShader(GL_TESS_EVALUATION_SHADER);
+        tessEShadHandle=shaderHandle;
+        break;
     default:
-      return false;
-  }
-  const char* c_code = shad.c_str();
-  glShaderSource(shaderHandle,1,&c_code,NULL);
-  
-  glCompileShader(shaderHandle);
-  
-  int result;
+        return false;
+    }
+    const char* c_code = shad.c_str();
+    glShaderSource(shaderHandle,1,&c_code,NULL);
+
+    glCompileShader(shaderHandle);
+
+    int result;
     glGetShaderiv( shaderHandle, GL_COMPILE_STATUS, &result );
     if( GL_FALSE == result ) {
         // Compile failed, store log and return false
@@ -107,7 +107,7 @@ bool GLSLProgram::compileShaderFromFile(const char* fileName, GLSLShader::GLSLSh
             int written = 0;
             glGetShaderInfoLog(shaderHandle, length, &written, c_log);
             logString = c_log;
-	    cout << logString;
+            cout << logString;
             delete [] c_log;
         }
         return false;
@@ -122,13 +122,13 @@ bool GLSLProgram::compileShaderFromFile(const char* fileName, GLSLShader::GLSLSh
 
 bool GLSLProgram::link()
 {
-  if(this->linked)
-    return true;
-  if(handle<=0)
-    return false;
-  glLinkProgram(handle);
-  
-      int status = 0;
+    if(this->linked)
+        return true;
+    if(handle<=0)
+        return false;
+    glLinkProgram(handle);
+
+    int status = 0;
     glGetProgramiv( handle, GL_LINK_STATUS, &status);
     if( GL_FALSE == status )
     {
@@ -139,7 +139,7 @@ bool GLSLProgram::link()
         glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &length );
 
         if( length > 0 )
-	{
+        {
             char * c_log = new char[length];
             int written = 0;
             glGetProgramInfoLog(handle, length, &written, c_log);
@@ -148,7 +148,7 @@ bool GLSLProgram::link()
         }
         return false;
     }
-    else 
+    else
     {
         linked = true;
         return linked;
@@ -156,41 +156,41 @@ bool GLSLProgram::link()
 }
 void GLSLProgram::use()
 {
-  if(handle<=0||!linked)
-    return;
-  glUseProgram(handle);
+    if(handle<=0||!linked)
+        return;
+    glUseProgram(handle);
 }
 
 string GLSLProgram::log()
 {
-  return this->logString;
+    return this->logString;
 }
 
 int GLSLProgram::getHandle()
 {
-  return this->handle;
+    return this->handle;
 }
 
 bool GLSLProgram::isLinked()
 {
-  return this->linked;
+    return this->linked;
 }
 
 void GLSLProgram::bindAttribLocation(GLuint location, const char* name)
 {
-  glBindAttribLocation(handle, location, name);
+    glBindAttribLocation(handle, location, name);
 }
 
 void GLSLProgram::bindFragDataLocation(GLuint location, const char* name)
 {
-  glBindFragDataLocation(handle, location, name);
+    glBindFragDataLocation(handle, location, name);
 }
 
 void GLSLProgram::setUniform(const char *name, float x, float y, float z)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform3f(loc,x,y,z);
+        glUniform3f(loc,x,y,z);
 }
 
 void GLSLProgram::setUniform(const char *name, const vec3 & v)
@@ -202,49 +202,49 @@ void GLSLProgram::setUniform(const char *name, const vec4 & v)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform4f(loc,v.x,v.y,v.z,v.w);
+        glUniform4f(loc,v.x,v.y,v.z,v.w);
 }
 
 void GLSLProgram::setUniform(const char *name, const mat4 & m)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+        glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
 }
 
 void GLSLProgram::setUniform(const char *name, const mat3 & m)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniformMatrix3fv(loc, 1, GL_FALSE, &m[0][0]);
+        glUniformMatrix3fv(loc, 1, GL_FALSE, &m[0][0]);
 }
 
 void GLSLProgram::setUniform(const char *name, float val)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform1f(loc, val);
+        glUniform1f(loc, val);
 }
 
 void GLSLProgram::setUniform(const char *name, GLuint val)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform1i(loc, val);
+        glUniform1i(loc, val);
 }
 
 void GLSLProgram::setUniform(const char *name, bool val)
 {
     int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform1i(loc, val);
+        glUniform1i(loc, val);
 }
 
 void GLSLProgram::setUniform(const char* name, int val)
 {
-	int loc = getUniformLocation(name);
+    int loc = getUniformLocation(name);
     if( loc >= 0 )
-      glUniform1i(loc, val);
+        glUniform1i(loc, val);
 }
 
 
@@ -299,5 +299,9 @@ void GLSLProgram::printActiveAttribs()
 int GLSLProgram::getUniformLocation(const char * name)
 {
     return glGetUniformLocation(handle, name);
+}
+string GLSLProgram::getShaderCode()
+{
+    return this->shaderCode;
 }
 

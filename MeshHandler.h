@@ -9,26 +9,26 @@
 #include "GLSLProgram.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "TextureSet.h"
+#include "TextureHandler.h"
+#include "MeshData.h"
 
 class MeshHandler
 {
 private:
 	Camera *cam;
 	GLSLProgram meshShader;
-	Mesh **mesh;
 	mat4 modelMatrix;
-	int width, height;
-	GLuint uploadTextureGFX(sf::Image img);
-	sf::Image btex;
-	GLuint texH;
+	bool drawWireframe;
 public:
 	MeshHandler();
 	~MeshHandler();
 	void init();
-	void setWidthHeight(int width, int height);
 	void draw();
 	void setCamera(Camera *cam);
 	void windowResizedUpdate();
+	void toggleWireframe();
+	void setWidthHeight(int w, int h);
 };
 
 #endif

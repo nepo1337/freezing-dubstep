@@ -3,16 +3,16 @@
 MeshHandler::MeshHandler()
 {
 	this->cam=0;
-	this->mesh=0;
-	this->width=this->height=0;
 	this->modelMatrix=mat4(1.0f);
-  
+	this->drawWireframe=false;  
 
 }
 MeshHandler::~MeshHandler()
 {
 
 }
+
+
 void MeshHandler::init()
 {
 	this->meshShader.compileShaderFromFile("terrWire.vsh",GLSLShader::VERTEX);
@@ -28,12 +28,14 @@ void MeshHandler::init()
 	this->meshShader.link();
 	cout<<this->meshShader.log()<<endl;
 	
-	btex.loadFromFile("textures/grass.png");
-	glActiveTexture(GL_TEXTURE0);
-	this->texH = this->uploadTextureGFX(this->btex);
 	this->meshShader.use();
-	this->meshShader.setUniform("tex",0);
-	this->meshShader.setUniform("drawWireframe",true);;
+	this->meshShader.setUniform("tex",2);
+	this->meshShader.setUniform("drawWireframe",this->drawWireframe);
+	glUseProgram(0);
+	
+	TextureSet t;
+	t.create("textures/green","greenSet","grass_02.png","grass_07.png","dirt_01.png","dirt_05.png");
+	TextureHandler::addTextureSet(t);
 }
 
 void MeshHandler::setCamera(Camera* cam)
@@ -53,52 +55,16 @@ void MeshHandler::draw()
 		this->meshShader.setUniform("MVP",cam->getCombinedVPMatrix());
 
 		//draw
-		for(int i=0;i<this->height;i++)
+		for(int i=0;i<MeshData::getHeight();i++)
 		{
-			for(int j=0;j<=this->width;j++)
+			for(int j=0;j<=MeshData::getWidth();j++)
 			{
-				glBindVertexArray(this->mesh[i][i].getVAOh());
-				glDrawArrays(GL_TRIANGLES,0,this->mesh[i][j].getNrOfVertices());
+				glBindVertexArray(MeshData::getVAOh(i,j));
+				glDrawArrays(GL_TRIANGLES,0,600);
 			}
 		}
-		glBindVertexArray(0);
-		glUseProgram(0);
-	}
-}
-void MeshHandler::setWidthHeight(int width, int height)
-{
-	if(width>0&&height>0)
-	{
-		//free up old mesh
-		for(int i=0;i<this->height;i++)
-		{
-			for(int j=0;j<this->width;j++)
-			{
-				this->mesh[i][j].freeGFX();
-			}
-		}
-		for(int i=0;i<this->height;i++)
-		{
-			delete[] this->mesh[i];
-		}
-		delete[] this->mesh;
 		
-		//new mesh
-		this->width=width;
-		this->height=height;
-		this->mesh=new Mesh*[this->height];
-		for(int i=0;i<this->height;i++)
-		{
-			this->mesh[i]=new Mesh[this->width];
-		}
-		for(int i=0;i<this->height;i++)
-		{
-			for(int j=0;j<this->width;j++)
-			{
-				this->mesh[i][j].setPosition(vec3(j,0.0f,i));
-				this->mesh[i][j].uploadToGFX();
-			}
-		}
+		glUseProgram(0);
 	}
 }
 void MeshHandler::windowResizedUpdate()
@@ -111,17 +77,16 @@ void MeshHandler::windowResizedUpdate()
 		glUseProgram(0);
 	}
 }
-GLuint MeshHandler::uploadTextureGFX(sf::Image img)
+void MeshHandler::toggleWireframe()
 {
-	GLuint handle;
-	glGenTextures(1,&handle);
-	glBindTexture(GL_TEXTURE_2D,handle);
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,img.getSize().x,img.getSize().y,0,GL_RGBA,GL_UNSIGNED_BYTE,img.getPixelsPtr());
-	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR  );
-	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glGenerateMipmap( GL_TEXTURE_2D);
-	
-	return handle;
+	this->drawWireframe=!this->drawWireframe;
+	this->meshShader.use();
+	this->meshShader.setUniform("drawWireframe",this->drawWireframe);
+	glUseProgram(0);
 }
+void MeshHandler::setWidthHeight(int w, int h)
+{
+	MeshData::setWidthHeight(w,h);
+}
+
+

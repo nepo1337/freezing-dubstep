@@ -13,30 +13,30 @@ using namespace glm;
 class Camera
 {
 private:
-	mat4 viewMatrix,projectionMatrix,viewportMatrix;
-	vec3 lookat, eye,up;
-	void calcViewMatrix();
-	float rotx,roty,rotz;
-	float distance;
+    mat4 viewMatrix,projectionMatrix,viewportMatrix;
+    vec3 lookat, eye,up;
+    void calcViewMatrix();
+    float rotx,roty,rotz;
+    float distance;
 public:
-	Camera();
-	~Camera();
-	mat4 getViewMatrix();
-	vec3 getPos();
-	void moveForeward(float a);
-	void moveBackward(float a);
-	void strafeLeft(float a);
-	void strafeRight(float a);
-	void zoomOut(float a);
-	void zoomIn(float a);
-	void rotateLeft(float deg);
-	void rotateUp(float deg);
-	void saveState();
-	void loadState();
-	void updateProjectionMatrix(int width, int height);
-	mat4 getProjectionMatrix();
-	mat4 getCombinedVPMatrix();
-	mat4 getViewportMatrix();
+    Camera();
+    ~Camera();
+    mat4 getViewMatrix();
+    vec3 getPos();
+    void moveForeward(float a);
+    void moveBackward(float a);
+    void strafeLeft(float a);
+    void strafeRight(float a);
+    void zoomOut(float a);
+    void zoomIn(float a);
+    void rotateLeft(float deg);
+    void rotateUp(float deg);
+    void saveState();
+    void loadState();
+    void updateProjectionMatrix(int width, int height);
+    mat4 getProjectionMatrix();
+    mat4 getCombinedVPMatrix();
+    mat4 getViewportMatrix();
 
 };
 

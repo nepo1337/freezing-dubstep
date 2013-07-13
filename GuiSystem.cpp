@@ -51,16 +51,17 @@ GuiSystem::~GuiSystem()
 
 }
 
-void GuiSystem::handleEvent(const sf::Event &e)
+int GuiSystem::handleEvent(const sf::Event &e)
 {
+	int id=-1;
 	switch(e.type)
 	{
 		case sf::Event::Resized:
-					// adjust the viewport when the window is resized
+				// adjust the viewport when the window is resized
 				this->orthoCam = glm::ortho(0.0f, (float)e.size.width,(float)e.size.height,0.0f, -1.f, 1.f);
 				this->guiShader.use();
 				this->guiShader.setUniform("orthoMatrix",this->orthoCam);
-			break;
+				break;
 		case sf::Event::KeyPressed:
 			switch(e.key.code)
 			{
@@ -68,7 +69,17 @@ void GuiSystem::handleEvent(const sf::Event &e)
 					std::cout<<"hej"<<std::endl;
 					break;
 			}
+
+		case sf::Event::MouseButtonPressed:
+			switch(e.mouseButton.button)
+				case sf::Mouse::Left:
+					for(int i=0;i<this->windows.size();i++)
+					{
+						id = this->windows[i]->handleLeftClick(e.mouseButton.x,e.mouseButton.y);
+					}
+					break;
 	}
+	return id;
 }
 void GuiSystem::addWindow(Window& w)
 {
@@ -77,12 +88,15 @@ void GuiSystem::addWindow(Window& w)
 }
 void GuiSystem::draw()
 {
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	this->guiShader.use();
 	for(int i=0;i<this->windows.size();i++)
 	{
 		if(this->windows[i])
 		{
-			this->windows[i]->draw();
+			this->windows[i]->draw(this->guiShader);
 		}
 		else
 		{
@@ -90,7 +104,9 @@ void GuiSystem::draw()
 			this->windows.pop_back();
 		}
 	}
-	
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 	glUseProgram(0);
 	glBindVertexArray(0);
 }
+

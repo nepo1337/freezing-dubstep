@@ -28,7 +28,7 @@
 
 Window::Window()
 {
-
+	this->modelMatrix=mat4(1.0f);
 }
 
 Window::~Window()
@@ -37,22 +37,74 @@ Window::~Window()
 	glDeleteVertexArrays(1,&this->VAOh);
 }
 
-void Window::create(float x, float y, float w, float h)
+void Window::addControl(BaseControl &c)
 {
+	c.setBackgroundColor(this->bgColor);
+	c.setFrameColor(this->frameColor);
+	c.updateCollisionRect(this->x,this->y);
+	this->controls.push_back(&c);
+}
+void Window::draw(GLSLProgram &shader)
+{
+	glBindVertexArray(this->VAOh);
+	shader.setUniform("modelMatrix",this->modelMatrix);
+	shader.setUniform("color",this->bgColor);
+	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+	shader.setUniform("color",this->frameColor);
+	glDrawArrays(GL_LINE_STRIP,4,5);
+	
+	for(int i=0;i<this->controls.size();i++)
+	{
+		this->controls[i]->draw(shader);
+	}
+}
+int Window::handleLeftClick(int x, int y)
+{
+	int id=-1;
+	bool found=false;
+	for(int i=0;i<this->controls.size()&&!found;i++)
+	{
+		id=controls[i]->intersect(x,y);
+		if(id)
+			found=true;
+	}
+	return id;
+}
+vec3 Window::getPosition()
+{
+	return this->pos;
+}
+void Window::setPosition(vec3 p)
+{
+	this->pos=vec3(p.x,p.y,0);
+	this->modelMatrix=mat4(1.0f);
+	this->modelMatrix*=translate(this->pos);
+	
+	for(int i=0;i<this->controls.size();i++)
+	{
+		this->controls[i]->updateCollisionRect(this->pos.x,this->pos.y);
+	}
+}
+void Window::create(float x, float y, float w, float h, int id)
+{
+	this->controlID=id;
 	this->x=x;
 	this->y=y;
 	this->width=w;
 	this->height=h;
-	this->colissionRect = sf::FloatRect(x,y,this->width,this->height);
 	
 	float verts[]=
 	{
-		this->x,this->y,0,
-		this->x,this->y+this->height,0,
-		this->x+this->width,this->y,0,
-		this->x+this->width,this->y+this->width,0,
-		this->x+this->width,this->y,0,
-		this->x,this->y+this->height,0
+		0,0,0,
+		0,this->height,0,
+		this->width,0,0,
+		this->width,this->height,0,
+		0,0,0,
+		0,this->height,0,
+		this->width,this->height,0,
+		this->width,0,0,
+		0,0,0
+		
 	};
 	glGenVertexArrays(1,&this->VAOh);
 	glBindVertexArray(this->VAOh);
@@ -63,21 +115,8 @@ void Window::create(float x, float y, float w, float h)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,NULL);
 	glBindVertexArray(0);
-}
-void Window::draw()
-{
-	glBindVertexArray(this->VAOh);
-	glDrawArrays(GL_TRIANGLES,0,6);
-}
-void Window::draw(glm::mat4&, glm::vec2)
-{
-	
-}
-void Window::hide()
-{
-	this->visible=false;
-}
-void Window::show()
-{
-	this->visible=true;
+	this->pos.x=x;
+	this->pos.y=y;
+	this->modelMatrix=mat4(1.0f);
+	this->modelMatrix*=translate(this->pos);
 }

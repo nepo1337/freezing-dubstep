@@ -34,11 +34,6 @@ class Button: public BaseControl
 public:
     Button();
     virtual ~Button();
-    void draw();
-    void draw(glm::mat4 &ortho,glm::vec2);
-    void hide();
-    void show();
-    void create(float x, float y, float w, float h);
 };
 
 #endif // BUTTON_H

@@ -31,23 +31,33 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
 #include <GL/glew.h>
+#include "GLSLProgram.h"
+
+using namespace glm;
 
 class BaseControl
 {
 protected:
-	sf::FloatRect colissionRect;
+	vec4 collisionRect;
 	bool visible;
 	float x,y,width,height;
 	GLuint VAOh,VBOh;
+	vec4 bgColor,frameColor;
+	int controlID;
 public:
-    BaseControl();
-    virtual ~BaseControl()=0;
+	BaseControl();
+	virtual ~BaseControl()=0;
     
-    virtual void draw()=0;
-    virtual void draw(glm::mat4 &ortho,glm::vec2)=0;
-    virtual void hide()=0;
-    virtual void show()=0;
-    virtual void create(float x, float y, float w, float h)=0;
+	void setBackgroundColor(vec4 c);
+	void setFrameColor(vec4 c);
+	vec4 getBackgroundColor();
+	vec4 getFrameColor();
+	virtual void updateCollisionRect(float x,float y);
+	virtual void draw(GLSLProgram &shader);
+	virtual void hide();
+	virtual void show();
+	virtual void create(float x, float y, float w, float h,int id);
+	virtual int intersect(int x, int y);
 };
 
 #endif // BASECONTROL_H

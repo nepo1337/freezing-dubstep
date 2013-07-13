@@ -27,20 +27,30 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 #include "BaseControl.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
+#include <vector>
+#include <iostream>
 
 
+using namespace glm;
+using namespace std;
 class Window : public BaseControl
 {
 private:
-	
+	vector<BaseControl*> controls;
+	mat4 modelMatrix;
+	vec3 pos;
 public:
-    Window();
-    virtual ~Window();
-    void draw();
-    void draw(glm::mat4 &ortho,glm::vec2);
-    void hide();
-    void show();
-    void create(float x, float y, float w, float h);
+	Window();
+	virtual ~Window();
+	void addControl(BaseControl &c);
+	void draw(GLSLProgram &shader);
+	int handleLeftClick(int x, int y);
+	void setPosition(vec3 p);
+	vec3 getPosition();
+	void create(float x, float y, float w, float h, int id);
 };
 
 #endif // WINDOW_H

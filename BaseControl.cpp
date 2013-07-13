@@ -35,10 +35,94 @@ BaseControl::BaseControl()
 	y=0;
 	VAOh=0;
 	VBOh=0;
+	bgColor=vec4(1.0f);
+	frameColor=vec4(1.0f);
+	controlID=0;
+	collisionRect=vec4(0.0f);
 }
 
 BaseControl::~BaseControl()
 {
 
+}
+
+void BaseControl::hide()
+{
+	this->visible=false;
+}
+void BaseControl::show()
+{
+	this->visible=true;
+}
+void BaseControl::create(float x, float y, float w, float h,int id)
+{
+	this->controlID=id;
+	this->x=x;
+	this->y=y;
+	this->width=w;
+	this->height=h;
+	this->collisionRect=vec4(x,y,this->width,this->height);
+	
+	float verts[]=
+	{
+		this->x,this->y,0,
+		this->x,this->y+this->height,0,
+		this->x+this->width,this->y,0,
+		this->x+this->width,this->y+this->height,0,
+		this->x,this->y,0,
+		this->x,this->y+this->height,0,
+		this->x+this->width,this->y+this->height,0,
+		this->x+this->width,this->y,0,
+		this->x,this->y,0
+		
+	};
+	glGenVertexArrays(1,&this->VAOh);
+	glBindVertexArray(this->VAOh);
+	glGenBuffers(1,&this->VBOh);
+	glBindBuffer(GL_ARRAY_BUFFER,this->VBOh);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts),&verts,GL_STATIC_DRAW);
+	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,NULL);
+	glBindVertexArray(0);
+}
+void BaseControl::draw(GLSLProgram &shader)
+{
+	glBindVertexArray(this->VAOh);
+	shader.setUniform("color",this->bgColor);
+	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+	shader.setUniform("color",this->frameColor);
+	glDrawArrays(GL_LINE_STRIP,4,5);
+}
+vec4 BaseControl::getBackgroundColor()
+{
+	return this->bgColor;
+}
+vec4 BaseControl::getFrameColor()
+{
+	return this->frameColor;
+}
+void BaseControl::setBackgroundColor(vec4 c)
+{
+	this->bgColor=c;
+}
+void BaseControl::setFrameColor(vec4 c)
+{
+	this->frameColor=c;
+}
+int BaseControl::intersect(int x, int y)
+{
+	int id=-1;
+	if(x>this->collisionRect.x&&x<this->collisionRect.x+this->collisionRect.z)
+	{
+		if(y>this->collisionRect.y&&y<this->collisionRect.y+this->collisionRect.w)
+			id=this->controlID;
+	}
+	return id;
+}
+void BaseControl::updateCollisionRect(float x, float y)
+{
+	this->collisionRect.x=this->x+x;
+	this->collisionRect.y=this->y+y;
 }
 

@@ -10,7 +10,9 @@
 #include "Camera.h"
 #include "GuiSystem.h"
 #include "Window.h"
+#include "Button.h"
 
+using namespace std;
 class Editor
 {
 private:
@@ -23,6 +25,8 @@ private:
 	int mousedx,mousedy;
 	bool running;
 	Window gWin;
+	Button gB;
+	void handleGUIEvents(int i);
 public:
 	Editor();
 	void run();

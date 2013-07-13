@@ -47,12 +47,13 @@ private:
 	glm::mat4 orthoCam;
 	GLSLProgram guiShader;
 public:
-    GuiSystem();
-    virtual ~GuiSystem();
-    void handleEvent(const sf::Event &e);
-    void addWindow(Window &w);
-    void draw();
-    void init(int w, int h);
+	GuiSystem();
+	virtual ~GuiSystem();
+	int handleEvent(const sf::Event &e);
+	void addWindow(Window &w);
+	void draw();
+	void init(int w, int h);
+
 };
 
 #endif // GUISYSTEM_H

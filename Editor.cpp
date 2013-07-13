@@ -25,9 +25,13 @@ Editor::Editor()
     
 	this->mousedx=this->mousedy=0;
 	
-	gWin.create(20,40,50,50);
+	gB.create(1,1,99,19,1);
+	gWin.create(20,40,100,200,0);
+	gWin.setBackgroundColor(vec4(0.5,0.6,0.2,0.3));
+	gWin.setFrameColor(vec4(0.4,0.4,0.9,0.9));
 	guiS.init(800,600);
 	guiS.addWindow(gWin);
+	gWin.addControl(gB);
 }
 
 void Editor::run()
@@ -71,7 +75,7 @@ void Editor::run()
 					}
 				break;
 			}
-			guiS.handleEvent(event);
+			this->handleGUIEvents(guiS.handleEvent(event));
 		}
 		//poll move camera
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -105,4 +109,10 @@ void Editor::run()
 		clock.restart();
 	}
 }
-
+void Editor::handleGUIEvents(int i)
+{
+	if(i==1)
+	{
+		cout<<"KNAPPKUK"<<endl;
+	}
+}

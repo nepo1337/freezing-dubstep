@@ -51,35 +51,59 @@ GuiSystem::~GuiSystem()
 
 }
 
-int GuiSystem::handleEvent(const sf::Event &e)
+EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 {
-	int id=-1;
-	switch(e.type)
+	EventTraveller t;
+	if(e.type== sf::Event::Resized)
 	{
-		case sf::Event::Resized:
-				// adjust the viewport when the window is resized
-				this->orthoCam = glm::ortho(0.0f, (float)e.size.width,(float)e.size.height,0.0f, -1.f, 1.f);
-				this->guiShader.use();
-				this->guiShader.setUniform("orthoMatrix",this->orthoCam);
-				break;
-		case sf::Event::KeyPressed:
-			switch(e.key.code)
-			{
-				case sf::Keyboard::C:
-					std::cout<<"hej"<<std::endl;
-					break;
-			}
-
-		case sf::Event::MouseButtonPressed:
-			switch(e.mouseButton.button)
-				case sf::Mouse::Left:
-					for(int i=0;i<this->windows.size();i++)
-					{
-						id = this->windows[i]->handleLeftClick(e.mouseButton.x,e.mouseButton.y);
-					}
-					break;
+		// adjust the viewport when the window is resized
+		this->orthoCam = glm::ortho(0.0f, (float)e.size.width,(float)e.size.height,0.0f, -1.f, 1.f);
+		this->guiShader.use();
+		this->guiShader.setUniform("orthoMatrix",this->orthoCam);
 	}
-	return id;
+	if(e.type== sf::Event::KeyPressed)
+	{
+		t.setEventType(EventType::KEY_PRESSED);
+		switch(e.key.code)
+		{
+			case sf::Keyboard::C:
+				std::cout<<"hej"<<std::endl;
+				break;
+		}
+	}
+	if(e.type== sf::Event::KeyReleased)
+		t.setEventType(EventType::KEY_PRESSED);
+
+	if(e.type== sf::Event::MouseButtonPressed)
+	{
+		switch(e.mouseButton.button)
+		{
+			case sf::Mouse::Left:
+				for(int i=0;i<this->windows.size();i++)
+				{
+					t = this->windows[i]->handleLeftClick(e.mouseButton.x,e.mouseButton.y);
+				}
+				t.setEventType(EventType::LEFT_MOUSE_CLICK);
+				break;
+			case sf::Mouse::Right:
+				t.setEventType(EventType::RIGHT_MOUSE_CLICK);
+				break;
+		}
+	}
+	if(e.type== sf::Event::MouseButtonReleased)
+	{
+		switch(e.mouseButton.button)
+		{
+			case sf::Mouse::Left:
+				t.setEventType(EventType::LEFT_MOUSE_RELEASE);
+				break;
+			case sf::Mouse::Right:
+				t.setEventType(EventType::RIGHT_MOUSE_RELEASED);
+				break;
+		}
+	}
+		
+	return t;
 }
 void GuiSystem::addWindow(Window& w)
 {
@@ -91,6 +115,7 @@ void GuiSystem::draw()
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glLineWidth(1.0f);
 	this->guiShader.use();
 	for(int i=0;i<this->windows.size();i++)
 	{
@@ -104,6 +129,7 @@ void GuiSystem::draw()
 			this->windows.pop_back();
 		}
 	}
+	glLineWidth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glUseProgram(0);

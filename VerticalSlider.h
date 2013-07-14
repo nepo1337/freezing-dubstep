@@ -24,41 +24,26 @@
 */
 
 
-#ifndef BASECONTROL_H
-#define BASECONTROL_H
-#include <SFML/Graphics.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <GL/glew.h>
-#include "GLSLProgram.h"
-#include "EventTraveller.h"
+#ifndef VERTICALSLIDER_H
+#define VERTICALSLIDER_H
+#include "BaseControl.h"
+#include "Button.h"
 
-using namespace glm;
-
-class BaseControl
+class VerticalSlider : public BaseControl
 {
-protected:
-	vec4 collisionRect;
-	bool visible;
-	float x,y,width,height;
-	GLuint VAOh,VBOh;
-	vec4 bgColor,frameColor;
-	int controlID;
+private:
+	Button scrollButton;
+	float bVal;
 public:
-	BaseControl();
-	virtual ~BaseControl()=0;
-    
-	void virtual setBackgroundColor(vec4 c);
-	void virtual setFrameColor(vec4 c);
-	vec4 getBackgroundColor();
-	vec4 getFrameColor();
-	virtual void updateCollisionRect(float x,float y);
-	virtual void draw(GLSLProgram &shader);
-	virtual void hide();
-	virtual void show();
-	virtual void create(float x, float y, float w, float h,int id);
-	virtual EventTraveller intersect(int x, int y);
+    VerticalSlider();
+    virtual ~VerticalSlider();
+    void create(float x, float y, float w, float h, int id);
+    void draw(GLSLProgram &shader);
+    void setBackgroundColor(vec4 c);
+    void setFrameColor(vec4 c);
+    void updateCollisionRect(float x, float y);
+    EventTraveller intersect(int x, int y);
+    float getNormalizedSliderValue();
 };
 
-#endif // BASECONTROL_H
+#endif // VERTICALSLIDER_H

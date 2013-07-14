@@ -24,41 +24,38 @@
 */
 
 
-#ifndef BASECONTROL_H
-#define BASECONTROL_H
-#include <SFML/Graphics.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <GL/glew.h>
-#include "GLSLProgram.h"
-#include "EventTraveller.h"
+#include "CheckBox.h"
 
-using namespace glm;
-
-class BaseControl
+CheckBox::CheckBox()
 {
-protected:
-	vec4 collisionRect;
-	bool visible;
-	float x,y,width,height;
-	GLuint VAOh,VBOh;
-	vec4 bgColor,frameColor;
-	int controlID;
-public:
-	BaseControl();
-	virtual ~BaseControl()=0;
-    
-	void virtual setBackgroundColor(vec4 c);
-	void virtual setFrameColor(vec4 c);
-	vec4 getBackgroundColor();
-	vec4 getFrameColor();
-	virtual void updateCollisionRect(float x,float y);
-	virtual void draw(GLSLProgram &shader);
-	virtual void hide();
-	virtual void show();
-	virtual void create(float x, float y, float w, float h,int id);
-	virtual EventTraveller intersect(int x, int y);
-};
+	this->checked=false;
+}
 
-#endif // BASECONTROL_H
+CheckBox::~CheckBox()
+{
+
+}
+EventTraveller CheckBox::intersect(int x, int y)
+{
+	EventTraveller t = BaseControl::intersect(x, y);
+	if(t.hasValidID())
+	{
+	    this->checked=!this->checked;
+	    this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
+	}
+	return t;
+}
+
+void CheckBox::draw(GLSLProgram& shader)
+{
+	glBindVertexArray(this->VAOh);
+	shader.setUniform("color",this->bgColor);
+	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+	shader.setUniform("color",this->frameColor);
+	glDrawArrays(GL_LINE_STRIP,4,5);
+}
+
+bool CheckBox::isChecked()
+{
+	return this->checked;
+}

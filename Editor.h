@@ -11,6 +11,9 @@
 #include "GuiSystem.h"
 #include "Window.h"
 #include "Button.h"
+#include "EventTraveller.h"
+#include "VerticalSlider.h"
+#include "CheckBox.h"
 
 using namespace std;
 class Editor
@@ -26,7 +29,11 @@ private:
 	bool running;
 	Window gWin;
 	Button gB;
-	void handleGUIEvents(int i);
+	VerticalSlider vS;
+	CheckBox cB;
+	void handleGUIEvents(EventTraveller t);
+	float bOffX,bOffY;
+	bool followWindow;
 public:
 	Editor();
 	void run();

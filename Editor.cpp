@@ -25,13 +25,20 @@ Editor::Editor()
     
 	this->mousedx=this->mousedy=0;
 	
-	gB.create(1,1,99,19,1);
+	gB.create(0,0,100,20,1);
+	vS.create(10,40,80,10,2);
+	cB.create(10,60,10,10,3);
 	gWin.create(20,40,100,200,0);
-	gWin.setBackgroundColor(vec4(0.5,0.6,0.2,0.3));
-	gWin.setFrameColor(vec4(0.4,0.4,0.9,0.9));
+	gWin.setBackgroundColor(vec4(0.5,0.6,0.2,0.8));
+	gWin.setFrameColor(vec4(0.2,0.2,0.9,1.0));
 	guiS.init(800,600);
 	guiS.addWindow(gWin);
 	gWin.addControl(gB);
+	gWin.addControl(vS);
+	gWin.addControl(cB);
+	this->followWindow=false;
+	this->bOffX=0;
+	this->bOffY=0;
 }
 
 void Editor::run()
@@ -98,7 +105,10 @@ void Editor::run()
 		this->mousedx = sf::Mouse::getPosition(this->window).x;
 		this->mousedy = sf::Mouse::getPosition(this->window).y;
 
-		
+		if(this->followWindow)
+		{
+			this->gWin.setPosition(vec2((float)sf::Mouse::getPosition(this->window).x-bOffX,(float)sf::Mouse::getPosition(this->window).y-bOffY));
+		}
 		// clear the buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -109,10 +119,20 @@ void Editor::run()
 		clock.restart();
 	}
 }
-void Editor::handleGUIEvents(int i)
+void Editor::handleGUIEvents(EventTraveller t)
 {
-	if(i==1)
+	if(t.getID()==1&&t.getEventType()==EventType::LEFT_MOUSE_CLICK)
 	{
-		cout<<"KNAPPKUK"<<endl;
+		this->followWindow=true;
+		bOffX=t.getOffset().x;
+		bOffY=t.getOffset().y;
+	}
+	if(t.getEventType()==EventType::LEFT_MOUSE_RELEASE)
+	{
+		this->followWindow=false;
+	}
+	if(t.getEventType()==EventType::LEFT_MOUSE_CLICK&&t.getID()==2)
+	{
+		cout << vS.getNormalizedSliderValue()<<endl;
 	}
 }

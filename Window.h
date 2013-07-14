@@ -32,7 +32,7 @@
 #include <glm/gtx/transform2.hpp>
 #include <vector>
 #include <iostream>
-
+#include "EventTraveller.h"
 
 using namespace glm;
 using namespace std;
@@ -47,9 +47,9 @@ public:
 	virtual ~Window();
 	void addControl(BaseControl &c);
 	void draw(GLSLProgram &shader);
-	int handleLeftClick(int x, int y);
-	void setPosition(vec3 p);
-	vec3 getPosition();
+	EventTraveller handleLeftClick(int x, int y);
+	void setPosition(vec2 p);
+	vec2 getPosition();
 	void create(float x, float y, float w, float h, int id);
 };
 

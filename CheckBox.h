@@ -24,41 +24,21 @@
 */
 
 
-#ifndef BASECONTROL_H
-#define BASECONTROL_H
-#include <SFML/Graphics.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <GL/glew.h>
-#include "GLSLProgram.h"
+#ifndef CHECKBOX_H
+#define CHECKBOX_H
+#include "BaseControl.h"
 #include "EventTraveller.h"
 
-using namespace glm;
-
-class BaseControl
+class CheckBox : public BaseControl
 {
-protected:
-	vec4 collisionRect;
-	bool visible;
-	float x,y,width,height;
-	GLuint VAOh,VBOh;
-	vec4 bgColor,frameColor;
-	int controlID;
+private:
+	bool checked;
 public:
-	BaseControl();
-	virtual ~BaseControl()=0;
-    
-	void virtual setBackgroundColor(vec4 c);
-	void virtual setFrameColor(vec4 c);
-	vec4 getBackgroundColor();
-	vec4 getFrameColor();
-	virtual void updateCollisionRect(float x,float y);
-	virtual void draw(GLSLProgram &shader);
-	virtual void hide();
-	virtual void show();
-	virtual void create(float x, float y, float w, float h,int id);
-	virtual EventTraveller intersect(int x, int y);
+    CheckBox();
+    virtual ~CheckBox();
+    EventTraveller intersect(int x, int y);
+    void draw(GLSLProgram &shader);
+    bool isChecked();
 };
 
-#endif // BASECONTROL_H
+#endif // CHECKBOX_H

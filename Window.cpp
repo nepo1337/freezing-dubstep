@@ -58,23 +58,23 @@ void Window::draw(GLSLProgram &shader)
 		this->controls[i]->draw(shader);
 	}
 }
-int Window::handleLeftClick(int x, int y)
+EventTraveller Window::handleLeftClick(int x, int y)
 {
-	int id=-1;
+	EventTraveller t;
 	bool found=false;
 	for(int i=0;i<this->controls.size()&&!found;i++)
 	{
-		id=controls[i]->intersect(x,y);
-		if(id)
+		t=controls[i]->intersect(x,y);
+		if(t.getID()>=0)
 			found=true;
 	}
-	return id;
+	return t;
 }
-vec3 Window::getPosition()
+vec2 Window::getPosition()
 {
-	return this->pos;
+	return vec2(this->pos.x,this->pos.y);
 }
-void Window::setPosition(vec3 p)
+void Window::setPosition(vec2 p)
 {
 	this->pos=vec3(p.x,p.y,0);
 	this->modelMatrix=mat4(1.0f);

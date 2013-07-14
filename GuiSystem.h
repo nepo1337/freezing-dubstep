@@ -37,6 +37,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
 #include "GLSLProgram.h"
+#include "EventTraveller.h"
 
 using namespace std;
 
@@ -49,7 +50,7 @@ private:
 public:
 	GuiSystem();
 	virtual ~GuiSystem();
-	int handleEvent(const sf::Event &e);
+	EventTraveller handleEvent(const sf::Event &e);
 	void addWindow(Window &w);
 	void draw();
 	void init(int w, int h);

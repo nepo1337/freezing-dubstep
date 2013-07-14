@@ -24,41 +24,38 @@
 */
 
 
-#ifndef BASECONTROL_H
-#define BASECONTROL_H
-#include <SFML/Graphics.hpp>
+#ifndef EVENTTRAVELLER_H
+#define EVENTTRAVELLER_H
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <GL/glew.h>
-#include "GLSLProgram.h"
-#include "EventTraveller.h"
+
+namespace EventType
+{
+	enum code
+	{
+		NONE,LEFT_MOUSE_CLICK,LEFT_MOUSE_RELEASE,RIGHT_MOUSE_CLICK,RIGHT_MOUSE_RELEASED,
+		KEY_PRESSED,KEY_RELEASED
+	};
+};
 
 using namespace glm;
 
-class BaseControl
+class EventTraveller
 {
-protected:
-	vec4 collisionRect;
-	bool visible;
-	float x,y,width,height;
-	GLuint VAOh,VBOh;
-	vec4 bgColor,frameColor;
-	int controlID;
+private:
+	int id;
+	EventType::code type;
+	vec2 offset;
 public:
-	BaseControl();
-	virtual ~BaseControl()=0;
-    
-	void virtual setBackgroundColor(vec4 c);
-	void virtual setFrameColor(vec4 c);
-	vec4 getBackgroundColor();
-	vec4 getFrameColor();
-	virtual void updateCollisionRect(float x,float y);
-	virtual void draw(GLSLProgram &shader);
-	virtual void hide();
-	virtual void show();
-	virtual void create(float x, float y, float w, float h,int id);
-	virtual EventTraveller intersect(int x, int y);
+	EventTraveller();
+	EventTraveller(EventType::code e, int id);
+	virtual ~EventTraveller();
+	EventType::code getEventType();
+	int getID();
+	void setID(int id);
+	void setEventType(EventType::code e);
+	void setOffset(vec2 o);
+	vec2 getOffset();
+	bool hasValidID();
 };
 
-#endif // BASECONTROL_H
+#endif // EVENTTRAVELLER_H

@@ -56,6 +56,9 @@ void BaseControl::show()
 }
 void BaseControl::create(float x, float y, float w, float h,int id)
 {
+	glDeleteBuffers(1,&this->VBOh);
+	glDeleteVertexArrays(1,&this->VAOh);
+	
 	this->controlID=id;
 	this->x=x;
 	this->y=y;
@@ -110,15 +113,18 @@ void BaseControl::setFrameColor(vec4 c)
 {
 	this->frameColor=c;
 }
-int BaseControl::intersect(int x, int y)
+EventTraveller BaseControl::intersect(int x, int y)
 {
-	int id=-1;
+	EventTraveller t;
 	if(x>this->collisionRect.x&&x<this->collisionRect.x+this->collisionRect.z)
 	{
 		if(y>this->collisionRect.y&&y<this->collisionRect.y+this->collisionRect.w)
-			id=this->controlID;
+		{
+			t.setID(this->controlID);
+			t.setOffset(vec2(x-this->collisionRect.x,y-this->collisionRect.y));
+		}
 	}
-	return id;
+	return t;
 }
 void BaseControl::updateCollisionRect(float x, float y)
 {

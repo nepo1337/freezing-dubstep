@@ -24,31 +24,21 @@
 */
 
 
-#ifndef VERTICALSLIDER_H
-#define VERTICALSLIDER_H
+#ifndef SPRITE_H
+#define SPRITE_H
 #include "BaseControl.h"
-#include "Button.h"
 #include <iostream>
-class VerticalSlider : public BaseControl
+
+using namespace std;
+
+class Sprite : public BaseControl
 {
 private:
-	Button scrollButton;
-	float bVal;
+	
 public:
-	VerticalSlider();
-	virtual ~VerticalSlider();
-	void create(float x, float y, float w, float h, int id);
-	void draw(GLSLProgram &shader);
-	void setBackgroundColor(vec4 c);
-	void setFrameColor(vec4 c);
-	void updateCollisionRect(float x, float y);
-	EventTraveller intersect(int x, int y);
-	float getNormalizedSliderValue();
-	void setNormalizedSliderValue(float f);
-	void setScrollButtonTexture(GLuint tex);
-	void hideScrollButtonFrame();
-	void setScrollButtonBackgroundColor(vec4 c);
-	void setScrollButtonFrameColor(vec4 c);
+	Sprite();
+	~Sprite();
+
 };
 
-#endif // VERTICALSLIDER_H
+#endif // SPRITE_H

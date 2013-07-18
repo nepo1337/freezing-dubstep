@@ -6,6 +6,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
+#include <SFML/Graphics.hpp>
 #include "MeshHandler.h"
 #include "Camera.h"
 #include "GuiSystem.h"
@@ -14,13 +15,15 @@
 #include "EventTraveller.h"
 #include "VerticalSlider.h"
 #include "CheckBox.h"
+#include "Sprite.h"
+#include "HorizontalSlider.h"
 
 using namespace std;
 class Editor
 {
 private:
 	sf::ContextSettings settings;
-	sf::RenderWindow window;
+	sf::Window window;
 	sf::Clock clock;
 	MeshHandler meshHandler;
 	GuiSystem guiS;
@@ -31,6 +34,8 @@ private:
 	Button gB;
 	VerticalSlider vS;
 	CheckBox cB;
+	Sprite sP;
+	HorizontalSlider hS;
 	void handleGUIEvents(EventTraveller t);
 	float bOffX,bOffY;
 	bool followWindow;

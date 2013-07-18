@@ -304,4 +304,17 @@ string GLSLProgram::getShaderCode()
 {
     return this->shaderCode;
 }
-
+void GLSLProgram::setSubroutine(GLSLShader::GLSLShaderType type, const char* name)
+{
+	GLuint loc=0;
+	if(type == GLSLShader::VERTEX)
+	{
+		loc = glGetSubroutineIndex(this->handle,GL_VERTEX_SHADER,name);
+		glUniformSubroutinesuiv(GL_VERTEX_SHADER,1,&loc);
+	}
+	if(type == GLSLShader::FRAGMENT)
+	{
+		loc = glGetSubroutineIndex(this->handle,GL_FRAGMENT_SHADER,name);
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER,1,&loc);
+	}
+}

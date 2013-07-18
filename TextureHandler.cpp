@@ -74,5 +74,30 @@ namespace TextureHandler
 		
 		return handle;
 	}
+	GLuint uploadSimpleTexNearest(sf::Image img)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		GLuint handle;
+		glGenTextures(1,&handle);
+		glBindTexture(GL_TEXTURE_2D,handle);
+		glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,img.getSize().x,img.getSize().y,0,GL_RGBA,GL_UNSIGNED_BYTE,img.getPixelsPtr());
+		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		
+		return handle;
+	}
+	GLuint uploadSimpleTexLinear(sf::Image img)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		GLuint handle;
+		glGenTextures(1,&handle);
+		glBindTexture(GL_TEXTURE_2D,handle);
+		glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,img.getSize().x,img.getSize().y,0,GL_RGBA,GL_UNSIGNED_BYTE,img.getPixelsPtr());
+		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		
+		return handle;
+	}
+
 }
 

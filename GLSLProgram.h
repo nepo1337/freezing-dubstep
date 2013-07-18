@@ -56,6 +56,7 @@ public:
     void setUniform(const char *name, GLuint val );
     void setUniform(const char *name, bool val );
     void setUniform(const char *name, int val);
+    void setSubroutine(GLSLShader::GLSLShaderType type, const char *name);
 
     void printActiveUniforms();
     void printActiveAttribs();

@@ -15,7 +15,7 @@ Editor::Editor()
 	window.setActive(true);
 	
 	GLenum err = glewInit();	
-	glClearColor(0.2,0.4,0.6,1.0);
+	glClearColor(0.2,0.4,0.6,0.0);
 
 	this->meshHandler.init();
 	this->meshHandler.setWidthHeight(1,1);
@@ -25,17 +25,30 @@ Editor::Editor()
     
 	this->mousedx=this->mousedy=0;
 	
+	sf::Image image;
+	image.loadFromFile("sfml.png");
+	GLuint th=TextureHandler::uploadSimpleTexLinear(image);
+	sf::Image scimg;
+	scimg.loadFromFile("add.png");
+	GLuint ball = TextureHandler::uploadSimpleTexLinear(scimg);
 	gB.create(0,0,100,20,1);
-	vS.create(10,40,80,10,2);
-	cB.create(10,60,10,10,3);
-	gWin.create(20,40,100,200,0);
-	gWin.setBackgroundColor(vec4(0.5,0.6,0.2,0.8));
-	gWin.setFrameColor(vec4(0.2,0.2,0.9,1.0));
+	vS.create(10,75,90,10,2);
+	cB.create(10,40,20,20,3);
+	sP.create(10,90,90,90,4);
+	sP.setTexture(th);
+	sP.hideFrame();
+	hS.create(105,90,10,90,5);
+	gWin.create(20,40,150,200,0);
+	gWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
+	gWin.setFrameColor(vec4(0.2,0.3,0.2,1.0));
 	guiS.init(800,600);
 	guiS.addWindow(gWin);
 	gWin.addControl(gB);
 	gWin.addControl(vS);
 	gWin.addControl(cB);
+	gWin.addControl(sP);
+	gWin.addControl(hS);
+
 	this->followWindow=false;
 	this->bOffX=0;
 	this->bOffY=0;
@@ -134,5 +147,13 @@ void Editor::handleGUIEvents(EventTraveller t)
 	if(t.getEventType()==EventType::LEFT_MOUSE_CLICK&&t.getID()==2)
 	{
 		cout << vS.getNormalizedSliderValue()<<endl;
+	}
+	if(t.getEventType()==EventType::LEFT_MOUSE_CLICK&&t.getID()==3)
+	{
+		this->meshHandler.toggleWireframe();
+	}
+	if(t.getEventType()==EventType::LEFT_MOUSE_CLICK&&t.getID()==4)
+	{
+		cout<<"SLUTA TA PÅ MIG!"<<endl;
 	}
 }

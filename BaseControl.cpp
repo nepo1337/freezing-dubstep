@@ -29,21 +29,26 @@
 BaseControl::BaseControl()
 {
 	visible=true;
+	frameVisible=true;
 	width=0;
 	height=0;
 	x=0;
 	y=0;
 	VAOh=0;
 	VBOh=0;
+	VBOuh=0;
 	bgColor=vec4(1.0f);
 	frameColor=vec4(1.0f);
 	controlID=0;
 	collisionRect=vec4(0.0f);
+	this->hasTex=false;
 }
 
 BaseControl::~BaseControl()
 {
-
+	glDeleteBuffers(1,&this->VBOh);
+	glDeleteBuffers(1,&this->VBOh);
+	glDeleteVertexArrays(1,&this->VAOh);
 }
 
 void BaseControl::hide()
@@ -54,9 +59,19 @@ void BaseControl::show()
 {
 	this->visible=true;
 }
+void BaseControl::hideFrame()
+{
+	this->frameVisible=false;
+}
+void BaseControl::showFrame()
+{
+	this->frameVisible=true;
+}
+
 void BaseControl::create(float x, float y, float w, float h,int id)
 {
 	glDeleteBuffers(1,&this->VBOh);
+	glDeleteBuffers(1,&this->VBOuh);
 	glDeleteVertexArrays(1,&this->VAOh);
 	
 	this->controlID=id;
@@ -79,23 +94,55 @@ void BaseControl::create(float x, float y, float w, float h,int id)
 		this->x,this->y,0
 		
 	};
+	float uvs[]=
+	{
+		0.0,0.0,
+		0.0,1.0,
+		1.0,0.0,
+		1.0,1.0
+	};
 	glGenVertexArrays(1,&this->VAOh);
 	glBindVertexArray(this->VAOh);
 	glGenBuffers(1,&this->VBOh);
 	glBindBuffer(GL_ARRAY_BUFFER,this->VBOh);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts),&verts,GL_STATIC_DRAW);
 	
+	glGenBuffers(1,&this->VBOuh);
+	glBindBuffer(GL_ARRAY_BUFFER,this->VBOuh);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs),&uvs,GL_STATIC_DRAW);
+	
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER,this->VBOh);
 	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,NULL);
+	glBindBuffer(GL_ARRAY_BUFFER,this->VBOuh);
+	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,0,NULL);
 	glBindVertexArray(0);
 }
 void BaseControl::draw(GLSLProgram &shader)
 {
-	glBindVertexArray(this->VAOh);
-	shader.setUniform("color",this->bgColor);
-	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-	shader.setUniform("color",this->frameColor);
-	glDrawArrays(GL_LINE_STRIP,4,5);
+	if(this->visible)
+	{
+		glBindVertexArray(this->VAOh);
+		if(this->hasTex)
+		{
+			glBindTexture(GL_TEXTURE_2D,this->texHandle);
+			shader.setSubroutine(GLSLShader::FRAGMENT, "texOut");
+		}
+		else
+		{
+			shader.setUniform("color",this->bgColor);
+			shader.setSubroutine(GLSLShader::FRAGMENT, "defOut");
+		}
+		glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+		
+		if(this->frameVisible)
+		{
+			shader.setUniform("color",this->frameColor);
+			shader.setSubroutine(GLSLShader::FRAGMENT, "defOut");
+			glDrawArrays(GL_LINE_STRIP,4,5);
+		}
+	}
 }
 vec4 BaseControl::getBackgroundColor()
 {
@@ -131,4 +178,14 @@ void BaseControl::updateCollisionRect(float x, float y)
 	this->collisionRect.x=this->x+x;
 	this->collisionRect.y=this->y+y;
 }
+void BaseControl::leftMBTNReleased()
+{
 
+}
+
+
+void BaseControl::setTexture(GLuint texH)
+{
+	this->texHandle=texH;
+	this->hasTex=true;
+}

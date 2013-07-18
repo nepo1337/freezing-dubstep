@@ -40,11 +40,12 @@ class BaseControl
 {
 protected:
 	vec4 collisionRect;
-	bool visible;
+	bool visible,frameVisible;
 	float x,y,width,height;
-	GLuint VAOh,VBOh;
+	GLuint VAOh,VBOh,VBOuh,texHandle;
 	vec4 bgColor,frameColor;
 	int controlID;
+	bool hasTex;
 public:
 	BaseControl();
 	virtual ~BaseControl()=0;
@@ -56,9 +57,13 @@ public:
 	virtual void updateCollisionRect(float x,float y);
 	virtual void draw(GLSLProgram &shader);
 	virtual void hide();
+	virtual void hideFrame();
+	virtual void showFrame();
 	virtual void show();
 	virtual void create(float x, float y, float w, float h,int id);
 	virtual EventTraveller intersect(int x, int y);
+	virtual void leftMBTNReleased();
+	virtual void setTexture(GLuint texH);
 };
 
 #endif // BASECONTROL_H

@@ -46,14 +46,6 @@ EventTraveller CheckBox::intersect(int x, int y)
 	return t;
 }
 
-void CheckBox::draw(GLSLProgram& shader)
-{
-	glBindVertexArray(this->VAOh);
-	shader.setUniform("color",this->bgColor);
-	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-	shader.setUniform("color",this->frameColor);
-	glDrawArrays(GL_LINE_STRIP,4,5);
-}
 
 bool CheckBox::isChecked()
 {

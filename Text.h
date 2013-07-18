@@ -24,31 +24,46 @@
 */
 
 
-#ifndef VERTICALSLIDER_H
-#define VERTICALSLIDER_H
-#include "BaseControl.h"
-#include "Button.h"
+#ifndef TEXT_H
+#define TEXT_H
 #include <iostream>
-class VerticalSlider : public BaseControl
+#include "GLSLProgram.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
+#include <vector>
+#include "TextureHandler.h"
+#include "FontInfo.h"
+
+#include <GL/glew.h>
+
+using namespace std;
+using namespace glm;
+
+class Text
 {
 private:
-	Button scrollButton;
-	float bVal;
+	string text;
+	FontInfo fontInfo;
+	GLuint VAOh,VBOvh,VBOuvh,texH;
+	int x,y;
+	float scale;
+	vec4 color;
+	struct uvPosTranslated
+	{
+		public:
+			vec2 ll,ul,lr,ur;
+	};
+	uvPosTranslated translateChar(char c);
 public:
-	VerticalSlider();
-	virtual ~VerticalSlider();
-	void create(float x, float y, float w, float h, int id);
-	void draw(GLSLProgram &shader);
-	void setBackgroundColor(vec4 c);
-	void setFrameColor(vec4 c);
-	void updateCollisionRect(float x, float y);
-	EventTraveller intersect(int x, int y);
-	float getNormalizedSliderValue();
-	void setNormalizedSliderValue(float f);
-	void setScrollButtonTexture(GLuint tex);
-	void hideScrollButtonFrame();
-	void setScrollButtonBackgroundColor(vec4 c);
-	void setScrollButtonFrameColor(vec4 c);
+    Text();
+    virtual ~Text();
+    void create(int x, int y, float scale,FontInfo f, GLuint tex,string text);
+    void setText(string text);
+    string getText();
+    int getTextLength();
+    void draw(GLSLProgram &shader);
+    void setColor(vec4 c);
 };
 
-#endif // VERTICALSLIDER_H
+#endif // TEXT_H

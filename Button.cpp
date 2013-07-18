@@ -28,11 +28,30 @@
 
 Button::Button()
 {
-	
+	this->buttonDown=false;
 }
 
 Button::~Button()
 {
 	glDeleteBuffers(1,&this->VBOh);
 	glDeleteVertexArrays(1,&this->VAOh);
+}
+EventTraveller Button::intersect(int x, int y)
+{
+	EventTraveller t = BaseControl::intersect(x, y);
+	this->buttonDown=false;
+	if(t.hasValidID())
+	{
+		this->buttonDown=true;
+		this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
+	}
+	return t;
+}
+void Button::leftMBTNReleased()
+{
+	if(this->buttonDown)
+	{
+		this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
+		this->buttonDown=false;
+	}
 }

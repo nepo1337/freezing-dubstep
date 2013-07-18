@@ -24,19 +24,20 @@
 */
 
 
-#ifndef VERTICALSLIDER_H
-#define VERTICALSLIDER_H
+#ifndef HORIZONTALSLIDER_H
+#define HORIZONTALSLIDER_H
+
 #include "BaseControl.h"
 #include "Button.h"
-#include <iostream>
-class VerticalSlider : public BaseControl
+
+class HorizontalSlider : public BaseControl
 {
 private:
 	Button scrollButton;
 	float bVal;
 public:
-	VerticalSlider();
-	virtual ~VerticalSlider();
+	HorizontalSlider();
+	virtual ~HorizontalSlider();
 	void create(float x, float y, float w, float h, int id);
 	void draw(GLSLProgram &shader);
 	void setBackgroundColor(vec4 c);
@@ -51,4 +52,4 @@ public:
 	void setScrollButtonFrameColor(vec4 c);
 };
 
-#endif // VERTICALSLIDER_H
+#endif // HORIZONTALSLIDER_H

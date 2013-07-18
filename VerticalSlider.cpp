@@ -40,6 +40,7 @@ VerticalSlider::~VerticalSlider()
 void VerticalSlider::create(float x, float y, float w, float h, int id)
 {
 	BaseControl::create(x,y,w,h,id);
+	//w*0.1, the slider button is always 10% of the width
 	this->scrollButton.create(x,y,w*0.1,h,-1);
 }
 void VerticalSlider::draw(GLSLProgram& shader)
@@ -50,8 +51,17 @@ void VerticalSlider::draw(GLSLProgram& shader)
 void VerticalSlider::setBackgroundColor(vec4 c)
 {
 	this->bgColor=c;
-	this->scrollButton.setBackgroundColor(vec4(vec3(c),1.0));
+	this->scrollButton.setBackgroundColor(vec4(vec3(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z),c.w));
 }
+void VerticalSlider::setScrollButtonBackgroundColor(vec4 c)
+{
+	this->scrollButton.setBackgroundColor(c);
+}
+void VerticalSlider::setScrollButtonFrameColor(vec4 c)
+{
+	this->scrollButton.setFrameColor(c);
+}
+
 void VerticalSlider::setFrameColor(vec4 c)
 {
 	this->frameColor=c;
@@ -62,10 +72,27 @@ EventTraveller VerticalSlider::intersect(int x, int y)
 	EventTraveller t = BaseControl::intersect(x, y);
 	if(t.hasValidID())
 	{
+		//0.051, 0.05 caused errors O_O?
+		//the slider button is always 10% of the slider,
+		//hence 0.1 and 0.5(used for middle of the slider)
+		float xVal=this->x-this->width*0.051+t.getOffset().x;
 		this->bVal = x-this->collisionRect.x;
-		this->scrollButton.create(this->x-this->width*0.05+t.getOffset().x,this->y,this->width*0.1,this->height,-1);
-		this->scrollButton.setBackgroundColor(vec4(vec3(this->bgColor),1.0));
-		this->scrollButton.setFrameColor(this->frameColor);
+		this->bVal/=this->width;
+		
+		//under 10% the slider should stop at the bottom
+		if(t.getOffset().x<=this->width*0.05)
+		{
+			xVal=this->x;
+			this->bVal=0;
+		}
+		//and the top of the slider at 90%
+		if(t.getOffset().x>=this->width-this->width*0.05)
+		{
+			xVal=this->x+this->width-this->width*0.1;
+			this->bVal=1;
+		}
+		
+		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
 	}
 	return t;
 }
@@ -76,10 +103,38 @@ void VerticalSlider::updateCollisionRect(float x, float y)
 }
 float VerticalSlider::getNormalizedSliderValue()
 {
-	this->bVal/=this->width;
-	if(this->bVal<0.02)
-		this->bVal=0;
-	if(this->bVal>0.98)
-		this->bVal=1;
 	return this->bVal;
+}
+
+//places the slider button somewhere in the slider space
+void VerticalSlider::setNormalizedSliderValue(float f)
+{
+	this->bVal=f;
+	if(this->bVal<0)
+		this->bVal=0;
+	if(this->bVal>1)
+		this->bVal=1;
+	
+	float xVal=this->x-this->width*0.05+this->width*this->bVal;
+	//under 10% the slider should stop at the bottom
+	if(this->bVal<0.1)
+	{
+		xVal=this->x;
+	}
+	//and the top of the slider at 90%
+	if(this->bVal>0.9)
+	{
+		xVal=this->x+this->width-this->width*0.1;
+	}
+	this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+
+}
+void VerticalSlider::setScrollButtonTexture(GLuint tex)
+{
+	//this->scrollBtnTexH=tex;
+	this->scrollButton.setTexture(tex);
+}
+void VerticalSlider::hideScrollButtonFrame()
+{
+	this->scrollButton.hideFrame();
 }

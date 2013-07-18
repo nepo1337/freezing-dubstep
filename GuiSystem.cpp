@@ -35,6 +35,7 @@ void GuiSystem::init(int w, int h)
 	cout << guiShader.log()<<endl;
 
 	this->guiShader.bindAttribLocation(0,"vertexPosition");
+	this->guiShader.bindAttribLocation(1,"vertexUV");
 	this->guiShader.link();
 	cout << this->guiShader.log()<<endl;
 	this->guiShader.use();
@@ -48,7 +49,7 @@ GuiSystem::GuiSystem()
 
 GuiSystem::~GuiSystem()
 {
-
+	
 }
 
 EventTraveller GuiSystem::handleEvent(const sf::Event &e)
@@ -96,6 +97,10 @@ EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 		{
 			case sf::Mouse::Left:
 				t.setEventType(EventType::LEFT_MOUSE_RELEASE);
+				for(int i=0;i<this->windows.size();i++)
+				{
+					this->windows[i]->handleLeftRelease();
+				}
 				break;
 			case sf::Mouse::Right:
 				t.setEventType(EventType::RIGHT_MOUSE_RELEASED);

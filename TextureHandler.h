@@ -13,5 +13,7 @@ namespace TextureHandler
 	TextureSet getTextureSet(string name);
 	void freeOnceInEndOfMain();
 	GLuint uploadTextureGFX(sf::Image img);
+	GLuint uploadSimpleTexNearest(sf::Image img);
+	GLuint uploadSimpleTexLinear(sf::Image img);
 }
 #endif

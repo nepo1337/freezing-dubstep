@@ -49,6 +49,7 @@ void Window::draw(GLSLProgram &shader)
 	glBindVertexArray(this->VAOh);
 	shader.setUniform("modelMatrix",this->modelMatrix);
 	shader.setUniform("color",this->bgColor);
+	shader.setSubroutine(GLSLShader::FRAGMENT, "defOut");
 	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 	shader.setUniform("color",this->frameColor);
 	glDrawArrays(GL_LINE_STRIP,4,5);
@@ -57,16 +58,22 @@ void Window::draw(GLSLProgram &shader)
 	{
 		this->controls[i]->draw(shader);
 	}
+	text.draw(shader);
 }
 EventTraveller Window::handleLeftClick(int x, int y)
 {
 	EventTraveller t;
-	bool found=false;
-	for(int i=0;i<this->controls.size()&&!found;i++)
+	//if the x,y coordinates intersects the window
+	if(this->intersect(x,y).hasValidID())
 	{
-		t=controls[i]->intersect(x,y);
-		if(t.getID()>=0)
-			found=true;
+		bool found=false;
+		//if a control is intersected, return its id
+		for(int i=0;i<this->controls.size()&&!found;i++)
+		{
+			t=controls[i]->intersect(x,y);
+			if(t.hasValidID())
+				found=true;
+		}
 	}
 	return t;
 }
@@ -79,6 +86,9 @@ void Window::setPosition(vec2 p)
 	this->pos=vec3(p.x,p.y,0);
 	this->modelMatrix=mat4(1.0f);
 	this->modelMatrix*=translate(this->pos);
+	this->collisionRect.x=p.x;
+	this->collisionRect.y=p.y;
+
 	
 	for(int i=0;i<this->controls.size();i++)
 	{
@@ -119,4 +129,27 @@ void Window::create(float x, float y, float w, float h, int id)
 	this->pos.y=y;
 	this->modelMatrix=mat4(1.0f);
 	this->modelMatrix*=translate(this->pos);
+	
+	this->collisionRect.x=x;
+	this->collisionRect.y=y;
+	this->collisionRect.z=width;
+	this->collisionRect.w=height;
+	
+	GLuint fontH;
+	sf::Image fI;
+	fI.loadFromFile("fnt.png");
+	fontH = TextureHandler::uploadSimpleTexLinear(fI);
+
+	
+	FontInfo f;
+	f.init(fI,"fntletters.txt",26,4);
+	text.create(5,0,0.5,f,fontH,"Menu");
+	text.setColor(vec4(1.0,1.0,1.0,1.0));
+}
+void Window::handleLeftRelease()
+{
+	for(int i=0;i<this->controls.size();i++)
+	{
+		this->controls[i]->leftMBTNReleased();
+	}
 }

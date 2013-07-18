@@ -27,13 +27,17 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 #include "BaseControl.h"
+#include "EventTraveller.h"
 
 class Button: public BaseControl
 {
-	
+private:
+	bool buttonDown;
 public:
-    Button();
-    virtual ~Button();
+	Button();
+	virtual ~Button();
+	EventTraveller intersect(int x, int y);
+	void leftMBTNReleased();
 };
 
 #endif // BUTTON_H

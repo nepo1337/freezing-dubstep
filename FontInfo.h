@@ -24,31 +24,33 @@
 */
 
 
-#ifndef VERTICALSLIDER_H
-#define VERTICALSLIDER_H
-#include "BaseControl.h"
-#include "Button.h"
+#ifndef FONTINFO_H
+#define FONTINFO_H
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
+#include <vector>
 #include <iostream>
-class VerticalSlider : public BaseControl
+#include <fstream>
+#include <SFML/Graphics.hpp>
+
+using namespace std;
+using namespace glm;
+class FontInfo
 {
 private:
-	Button scrollButton;
-	float bVal;
+	vector<vec2> offsets;
+	int charWidth,charHeight,pixWidth,pixHeight;
 public:
-	VerticalSlider();
-	virtual ~VerticalSlider();
-	void create(float x, float y, float w, float h, int id);
-	void draw(GLSLProgram &shader);
-	void setBackgroundColor(vec4 c);
-	void setFrameColor(vec4 c);
-	void updateCollisionRect(float x, float y);
-	EventTraveller intersect(int x, int y);
-	float getNormalizedSliderValue();
-	void setNormalizedSliderValue(float f);
-	void setScrollButtonTexture(GLuint tex);
-	void hideScrollButtonFrame();
-	void setScrollButtonBackgroundColor(vec4 c);
-	void setScrollButtonFrameColor(vec4 c);
+    FontInfo();
+    virtual ~FontInfo();
+    void init(sf::Image img, string fontFile, int charWidth, int charHeight);
+    vec2 getCharOffset(char c);
+    int getNrCharLeft();
+    int getNrCharUp();
+    int getPixWidth();
+    int getPixHeight();
 };
 
-#endif // VERTICALSLIDER_H
+#endif // FONTINFO_H

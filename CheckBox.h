@@ -37,7 +37,6 @@ public:
     CheckBox();
     virtual ~CheckBox();
     EventTraveller intersect(int x, int y);
-    void draw(GLSLProgram &shader);
     bool isChecked();
 };
 

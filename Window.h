@@ -33,6 +33,8 @@
 #include <vector>
 #include <iostream>
 #include "EventTraveller.h"
+#include "Text.h"
+#include "FontInfo.h"
 
 using namespace glm;
 using namespace std;
@@ -42,12 +44,14 @@ private:
 	vector<BaseControl*> controls;
 	mat4 modelMatrix;
 	vec3 pos;
+	Text text;
 public:
 	Window();
 	virtual ~Window();
 	void addControl(BaseControl &c);
 	void draw(GLSLProgram &shader);
 	EventTraveller handleLeftClick(int x, int y);
+	void handleLeftRelease();
 	void setPosition(vec2 p);
 	vec2 getPosition();
 	void create(float x, float y, float w, float h, int id);

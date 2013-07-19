@@ -34,7 +34,7 @@
 #include <vector>
 #include "TextureHandler.h"
 #include "FontInfo.h"
-
+#include "Structs.h"
 #include <GL/glew.h>
 
 using namespace std;
@@ -47,14 +47,8 @@ private:
 	FontInfo fontInfo;
 	GLuint VAOh,VBOvh,VBOuvh,texH;
 	int x,y;
-	float scale;
+	float scale,spacing;
 	vec4 color;
-	struct uvPosTranslated
-	{
-		public:
-			vec2 ll,ul,lr,ur;
-	};
-	uvPosTranslated translateChar(char c);
 public:
     Text();
     virtual ~Text();
@@ -63,7 +57,8 @@ public:
     string getText();
     int getTextLength();
     void draw(GLSLProgram &shader);
-    void setColor(vec4 c);
+    void setFontTexture(GLuint textH);
+    void setSpacing(float f);
 };
 
 #endif // TEXT_H

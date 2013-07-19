@@ -31,6 +31,21 @@ Editor::Editor()
 	sf::Image scimg;
 	scimg.loadFromFile("add.png");
 	GLuint ball = TextureHandler::uploadSimpleTexLinear(scimg);
+	
+	//font stuff
+	GLuint fontH;
+	sf::Image fI;
+	fI.loadFromFile("fnt.png");
+	fontH = TextureHandler::uploadSimpleTexLinear(fI);
+
+	FontInfo f;
+	f.init(fI,"fntletters.txt",26,4);
+	textL.create(0,0,40,20,-1,f,fontH);
+	textL.setText("=Menu=");
+	
+	textF.create(50,40,70,20,9,f,fontH);
+	//textF.setText("");
+	
 	gB.create(0,0,100,20,1);
 	vS.create(10,75,90,10,2);
 	cB.create(10,40,20,20,3);
@@ -48,6 +63,8 @@ Editor::Editor()
 	gWin.addControl(cB);
 	gWin.addControl(sP);
 	gWin.addControl(hS);
+	gWin.addControl(textL);
+	gWin.addControl(textF);
 
 	this->followWindow=false;
 	this->bOffX=0;

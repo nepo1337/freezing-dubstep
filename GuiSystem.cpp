@@ -65,16 +65,21 @@ EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 	if(e.type== sf::Event::KeyPressed)
 	{
 		t.setEventType(EventType::KEY_PRESSED);
-		switch(e.key.code)
-		{
-			case sf::Keyboard::C:
-				std::cout<<"hej"<<std::endl;
-				break;
-		}
+		//this->translateSfKeyCode(e.key.code);
+		
 	}
 	if(e.type== sf::Event::KeyReleased)
-		t.setEventType(EventType::KEY_PRESSED);
-
+		t.setEventType(EventType::KEY_RELEASED);
+	if(e.type == sf::Event::TextEntered)
+	{
+		if(e.text.unicode < 128)
+		{
+			for(int i=0;i<this->windows.size();i++)
+			{
+				this->windows[i]->handleKeyDown(static_cast<char>(e.text.unicode));
+			}
+		}
+	}
 	if(e.type== sf::Event::MouseButtonPressed)
 	{
 		switch(e.mouseButton.button)
@@ -110,6 +115,7 @@ EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 		
 	return t;
 }
+
 void GuiSystem::addWindow(Window& w)
 {
 	this->windows.push_back(&w);

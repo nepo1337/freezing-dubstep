@@ -28,8 +28,6 @@
 
 FontInfo::FontInfo()
 {
-	for(int i=0;i<128;i++)
-		this->offsets.push_back(vec2(0.0));
 	this->pixWidth=0;
 }
 
@@ -41,6 +39,10 @@ FontInfo::~FontInfo()
 vec2 FontInfo::getCharOffset(char c)
 {
 	return offsets[(int)c];
+}
+structs::uvPosTranslated FontInfo::getUV(char c)
+{
+	return this->uvs[(int)c];
 }
 
 void FontInfo::init(sf::Image img, string fontFile, int charWidth, int charHeight)
@@ -58,11 +60,14 @@ void FontInfo::init(sf::Image img, string fontFile, int charWidth, int charHeigh
 	int lazyW=0;
 	this->pixWidth=img.getSize().x/charWidth;
 	this->pixHeight=img.getSize().y/charHeight;
+	
+
+	float leftScale=(float)1/this->getNrCharLeft();
+	float upScale=(float)1/this->getNrCharUp();
 	for(int k=0;k<this->charHeight;k++)
 	{
 		for(int i=0;i<this->charWidth;i++)
 		{
-			//räkna ut varje bokstav här. hämta structen från text och använd den
 			//check from left to right
 			for(int l=i*(img.getSize().x/this->charWidth);l<(i+1)*(img.getSize().x/this->charWidth)&&!leftFound;l++)
 			{
@@ -74,6 +79,14 @@ void FontInfo::init(sf::Image img, string fontFile, int charWidth, int charHeigh
 						if((int)chars[counter]>0&&(int)chars[counter]<128)
 						{
 							this->offsets[(int)chars[counter]].x=lazyW;
+							
+							//uv calculation for each letter
+							structs::uvPosTranslated uv;
+							uv.ll=vec2(i*leftScale,upScale*k);
+							uv.ul=vec2(i*leftScale,upScale*(k+1));
+							uv.lr=vec2((i+1)*leftScale,upScale*k);
+							uv.ur=vec2((i+1)*leftScale,upScale*(k+1));
+							this->uvs[(int)chars[counter]] = uv;
 						}
 					}
 				}

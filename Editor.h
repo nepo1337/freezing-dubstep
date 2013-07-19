@@ -17,6 +17,8 @@
 #include "CheckBox.h"
 #include "Sprite.h"
 #include "HorizontalSlider.h"
+#include "TextLabel.h"
+#include "TextField.h"
 
 using namespace std;
 class Editor
@@ -36,6 +38,8 @@ private:
 	CheckBox cB;
 	Sprite sP;
 	HorizontalSlider hS;
+	TextLabel textL;
+	TextField textF;
 	void handleGUIEvents(EventTraveller t);
 	float bOffX,bOffY;
 	bool followWindow;

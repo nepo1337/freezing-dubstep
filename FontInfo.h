@@ -30,23 +30,25 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
-#include <vector>
 #include <iostream>
 #include <fstream>
 #include <SFML/Graphics.hpp>
+#include "Structs.h"
 
 using namespace std;
 using namespace glm;
 class FontInfo
 {
 private:
-	vector<vec2> offsets;
+	vec2 offsets[256];
+	structs::uvPosTranslated uvs[256];
 	int charWidth,charHeight,pixWidth,pixHeight;
 public:
     FontInfo();
     virtual ~FontInfo();
     void init(sf::Image img, string fontFile, int charWidth, int charHeight);
     vec2 getCharOffset(char c);
+    structs::uvPosTranslated getUV(char c);
     int getNrCharLeft();
     int getNrCharUp();
     int getPixWidth();

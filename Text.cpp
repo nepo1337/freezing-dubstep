@@ -31,6 +31,7 @@ Text::Text()
 	this->VAOh=this->VBOuvh=this->VBOvh=0;
 	this->color=vec4(1.0f);
 	this->scale=0;
+	this->spacing=3;
 }
 
 Text::~Text()
@@ -56,7 +57,7 @@ void Text::create(int x, int y, float scale,FontInfo f, GLuint tex,string text)
 	int pixHeight= fontInfo.getPixHeight()*this->scale;
 	vector<float> verts;
 	int spaceBuffer=0;
-	float spacing=2;
+
 	for(int i=0;i<this->text.size();i++)
 	{
 		spaceBuffer+=-this->fontInfo.getCharOffset(this->text[i]).x*this->scale;
@@ -90,8 +91,8 @@ void Text::create(int x, int y, float scale,FontInfo f, GLuint tex,string text)
 	vector<float> uvs;
 	for(int i=0;i<this->text.size();i++)
 	{
-		uvPosTranslated uv;
-		uv = this->translateChar(this->text[i]);
+		structs::uvPosTranslated uv;
+		uv = this->fontInfo.getUV(this->text[i]);
 		uvs.push_back(uv.ll.x);
 		uvs.push_back(uv.ll.y);
 		uvs.push_back(uv.ul.x);
@@ -146,61 +147,12 @@ void Text::setText(string text)
 {
 	this->create(this->x,this->y,this->scale,this->fontInfo,this->texH,text);
 }
-Text::uvPosTranslated Text::translateChar(char c)
+
+void Text::setFontTexture(GLuint textH)
 {
-	uvPosTranslated uv;
-	
-	int charIndexX, charIndexY;
-	//small a-z
-	if((int)c>96&&(int)c<123)
-	{
-		charIndexX = (int)c-97;
-		charIndexY = 0;
-		float leftScale=(float)1/this->fontInfo.getNrCharLeft();
-		float upScale=(float)1/this->fontInfo.getNrCharUp();
-		uv.ll = vec2((float)charIndexX*leftScale,upScale*charIndexY);
-		uv.ul = vec2((float)charIndexX*leftScale,upScale*(charIndexY+1));
-		uv.lr = vec2((float)(charIndexX+1)*leftScale,upScale*charIndexY);
-		uv.ur = vec2((float)(charIndexX+1)*leftScale,upScale*(charIndexY+1));
-	}
-	//capital A-Z
-	if((int)c>64&&(int)c<91)
-	{
-		charIndexX = (int)c-65;
-		charIndexY = 1;
-		float leftScale=(float)1/this->fontInfo.getNrCharLeft();
-		float upScale=(float)1/this->fontInfo.getNrCharUp();
-		uv.ll = vec2((float)charIndexX/26,upScale*charIndexY);
-		uv.ul = vec2((float)charIndexX/26,upScale*(charIndexY+1));
-		uv.lr = vec2((float)charIndexX/26+leftScale,upScale*charIndexY);
-		uv.ur = vec2((float)charIndexX/26+leftScale,upScale*(charIndexY+1));
-	}
-	//numbers 
-	if((int)c>47&&(int)c<58)
-	{
-		charIndexX = (int)c-48;
-		charIndexY = 2;
-		float leftScale=(float)1/this->fontInfo.getNrCharLeft();
-		float upScale=(float)1/this->fontInfo.getNrCharUp();
-		uv.ll = vec2((float)charIndexX/26,upScale*charIndexY);
-		uv.ul = vec2((float)charIndexX/26,upScale*(charIndexY+1));
-		uv.lr = vec2((float)charIndexX/26+leftScale,upScale*charIndexY);
-		uv.ur = vec2((float)charIndexX/26+leftScale,upScale*(charIndexY+1));
-	}
-	//special hardcoded symbols like !"#
-	
-	//space
-	if(c==' ')
-	{
-		uv.ll = vec2(0,0);
-		uv.ul = vec2(0,0);
-		uv.lr = vec2(0,0);
-		uv.ur = vec2(0,0);
-	}
-	
-	return uv;
+	this->texH=textH;
 }
-void Text::setColor(vec4 c)
+void Text::setSpacing(float f)
 {
-	this->color=c;
+	this->spacing=f;
 }

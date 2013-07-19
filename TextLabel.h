@@ -24,38 +24,26 @@
 */
 
 
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef TEXTLABEL_H
+#define TEXTLABEL_H
 #include "BaseControl.h"
+#include "FontInfo.h"
+#include "Text.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
-#include <vector>
-#include <iostream>
-#include "EventTraveller.h"
-#include "FontInfo.h"
 
-using namespace glm;
-using namespace std;
-class Window : public BaseControl
+class TextLabel: public BaseControl
 {
 private:
-	vector<BaseControl*> controls;
-	mat4 modelMatrix;
-	vec3 pos;
-	
+	FontInfo fontInfo;
+	Text text;
 public:
-	Window();
-	virtual ~Window();
-	void addControl(BaseControl &c);
-	void draw(GLSLProgram &shader);
-	EventTraveller handleLeftClick(int x, int y);
-	void handleLeftRelease();
-	void setPosition(vec2 p);
-	vec2 getPosition();
-	void create(float x, float y, float w, float h, int id);
-	void handleKeyDown(char c);
-	
+    TextLabel();
+    virtual ~TextLabel();
+    void setText(string text);
+    void draw(GLSLProgram &shader);
+    void create(float x, float y, float w, float h,int id,FontInfo f, GLuint texh);
 };
 
-#endif // WINDOW_H
+#endif // TEXTLABEL_H

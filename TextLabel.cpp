@@ -24,38 +24,30 @@
 */
 
 
-#ifndef WINDOW_H
-#define WINDOW_H
-#include "BaseControl.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform2.hpp>
-#include <vector>
-#include <iostream>
-#include "EventTraveller.h"
-#include "FontInfo.h"
+#include "TextLabel.h"
 
-using namespace glm;
-using namespace std;
-class Window : public BaseControl
+TextLabel::TextLabel()
 {
-private:
-	vector<BaseControl*> controls;
-	mat4 modelMatrix;
-	vec3 pos;
-	
-public:
-	Window();
-	virtual ~Window();
-	void addControl(BaseControl &c);
-	void draw(GLSLProgram &shader);
-	EventTraveller handleLeftClick(int x, int y);
-	void handleLeftRelease();
-	void setPosition(vec2 p);
-	vec2 getPosition();
-	void create(float x, float y, float w, float h, int id);
-	void handleKeyDown(char c);
-	
-};
+	this->visible=false;
+}
 
-#endif // WINDOW_H
+TextLabel::~TextLabel()
+{
+
+}
+
+void TextLabel::setText(string text)
+{
+	this->text.setText(text);
+}
+void TextLabel::draw(GLSLProgram& shader)
+{
+    BaseControl::draw(shader);
+    this->text.draw(shader);
+}
+void TextLabel::create(float x, float y, float w, float h, int id,FontInfo f, GLuint texh)
+{
+    BaseControl::create(x, y, w, h, id);
+    this->fontInfo=f;
+    this->text.create(this->x+2,this->y,this->height/this->fontInfo.getPixHeight(),this->fontInfo,texh,"");
+}

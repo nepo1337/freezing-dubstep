@@ -64,6 +64,7 @@ public:
 	virtual EventTraveller intersect(int x, int y);
 	virtual void leftMBTNReleased();
 	virtual void setTexture(GLuint texH);
+	virtual void handleKeyDown(char c);
 };
 
 #endif // BASECONTROL_H

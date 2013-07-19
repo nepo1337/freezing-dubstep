@@ -189,3 +189,7 @@ void BaseControl::setTexture(GLuint texH)
 	this->texHandle=texH;
 	this->hasTex=true;
 }
+void BaseControl::handleKeyDown(char c)
+{
+
+}

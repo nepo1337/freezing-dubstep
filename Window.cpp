@@ -58,7 +58,6 @@ void Window::draw(GLSLProgram &shader)
 	{
 		this->controls[i]->draw(shader);
 	}
-	text.draw(shader);
 }
 EventTraveller Window::handleLeftClick(int x, int y)
 {
@@ -134,22 +133,18 @@ void Window::create(float x, float y, float w, float h, int id)
 	this->collisionRect.y=y;
 	this->collisionRect.z=width;
 	this->collisionRect.w=height;
-	
-	GLuint fontH;
-	sf::Image fI;
-	fI.loadFromFile("fnt.png");
-	fontH = TextureHandler::uploadSimpleTexLinear(fI);
-
-	
-	FontInfo f;
-	f.init(fI,"fntletters.txt",26,4);
-	text.create(5,0,0.5,f,fontH,"Menu");
-	text.setColor(vec4(1.0,1.0,1.0,1.0));
 }
 void Window::handleLeftRelease()
 {
 	for(int i=0;i<this->controls.size();i++)
 	{
 		this->controls[i]->leftMBTNReleased();
+	}
+}
+void Window::handleKeyDown(char c)
+{
+	for(int i=0;i<this->controls.size();i++)
+	{
+		this->controls[i]->handleKeyDown(c);
 	}
 }

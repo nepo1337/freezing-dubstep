@@ -76,28 +76,22 @@ void TextField::setText(string text)
 {
 	this->text.setText(text);
 }
-EventTraveller TextField::intersect(int x, int y)
+
+void TextField::handleLeftClick(int x, int y)
 {
 	this->frameColor=vec4(this->frameColor.r,this->frameColor.g,this->frameColor.b,this->frameColor.a);
-	bool inside=false;
-	if(x>this->collisionRect.x&&x<this->collisionRect.x+this->collisionRect.z)
+	if(BaseControl::intersect(x,y))
 	{
-		if(y>this->collisionRect.y&&y<this->collisionRect.y+this->collisionRect.w)
-		{
-			if(!this->isActive)
-			{
-				this->isActive=true;
-				inside=true;
-			}
-		}
+		if(!this->isActive)
+			this->isActive=true;
 	}
-	if(!inside)
+	else
 	{
 		this->isActive=false;
 			
 	}
-	return BaseControl::intersect(x, y);
 }
+
 void TextField::handleKeyDown(char c)
 {
 	if(this->isActive)
@@ -126,4 +120,8 @@ void TextField::handleKeyDown(char c)
 void TextField::setMaxCharLength(int l)
 {
 	this->maxChars=l;
+}
+string TextField::getText()
+{
+	return this->text.getText();
 }

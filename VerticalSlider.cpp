@@ -36,6 +36,62 @@ VerticalSlider::~VerticalSlider()
 	glDeleteBuffers(1,&this->VBOh);
 	glDeleteVertexArrays(1,&this->VAOh);
 }
+void VerticalSlider::handleLeftClick(int x, int y)
+{
+	BaseControl::handleLeftClick(x,y);
+	if(this->mouseButtonDown)
+	{
+		//0.051, 0.05 caused errors O_O?
+		//the slider button is always 10% of the slider,
+		//hence 0.1 and 0.5(used for middle of the slider)
+		float xVal=this->x-this->width*0.051+(x-this->collisionRect.x);
+		this->bVal = x-this->collisionRect.x;
+		this->bVal/=this->width;
+		
+		//under 10% the slider should stop at the bottom
+		if((x-this->collisionRect.x)<=this->width*0.05)
+		{
+			xVal=this->x;
+			this->bVal=0;
+		}
+		//and the top of the slider at 90%
+		if((x-this->collisionRect.x)>=this->width-this->width*0.05)
+		{
+			xVal=this->x+this->width-this->width*0.1;
+			this->bVal=1;
+		}
+		
+		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+	}
+}
+void VerticalSlider::mouseHover(int x, int y)
+{
+	BaseControl::mouseHover(x,y);
+	if(this->mouseOver&&this->mouseButtonDown)
+	{
+		//0.051, 0.05 caused errors O_O?
+		//the slider button is always 10% of the slider,
+		//hence 0.1 and 0.5(used for middle of the slider)
+		float xVal=this->x-this->width*0.051+(x-this->collisionRect.x);
+		this->bVal = x-this->collisionRect.x;
+		this->bVal/=this->width;
+		
+		//under 10% the slider should stop at the bottom
+		if((x-this->collisionRect.x)<=this->width*0.05)
+		{
+			xVal=this->x;
+			this->bVal=0;
+		}
+		//and the top of the slider at 90%
+		if((x-this->collisionRect.x)>=this->width-this->width*0.05)
+		{
+			xVal=this->x+this->width-this->width*0.1;
+			this->bVal=1;
+		}
+		
+		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+	}
+}
 
 void VerticalSlider::create(float x, float y, float w, float h, int id)
 {
@@ -67,35 +123,7 @@ void VerticalSlider::setFrameColor(vec4 c)
 	this->frameColor=c;
 	this->scrollButton.setFrameColor(c);
 }
-EventTraveller VerticalSlider::intersect(int x, int y)
-{
-	EventTraveller t = BaseControl::intersect(x, y);
-	if(t.hasValidID())
-	{
-		//0.051, 0.05 caused errors O_O?
-		//the slider button is always 10% of the slider,
-		//hence 0.1 and 0.5(used for middle of the slider)
-		float xVal=this->x-this->width*0.051+t.getOffset().x;
-		this->bVal = x-this->collisionRect.x;
-		this->bVal/=this->width;
-		
-		//under 10% the slider should stop at the bottom
-		if(t.getOffset().x<=this->width*0.05)
-		{
-			xVal=this->x;
-			this->bVal=0;
-		}
-		//and the top of the slider at 90%
-		if(t.getOffset().x>=this->width-this->width*0.05)
-		{
-			xVal=this->x+this->width-this->width*0.1;
-			this->bVal=1;
-		}
-		
-		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
-	}
-	return t;
-}
+
 void VerticalSlider::updateCollisionRect(float x, float y)
 {
 	this->scrollButton.updateCollisionRect(x,y);

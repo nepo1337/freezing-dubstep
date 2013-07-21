@@ -32,8 +32,9 @@
 #include <glm/gtx/transform2.hpp>
 #include <GL/glew.h>
 #include "GLSLProgram.h"
-#include "EventTraveller.h"
+#include <iostream>
 
+using namespace std;
 using namespace glm;
 
 class BaseControl
@@ -45,13 +46,14 @@ protected:
 	GLuint VAOh,VBOh,VBOuh,texHandle;
 	vec4 bgColor,frameColor;
 	int controlID;
-	bool hasTex;
+	bool hasTex,mouseOver,mouseButtonDown;
 public:
 	BaseControl();
 	virtual ~BaseControl()=0;
     
-	void virtual setBackgroundColor(vec4 c);
-	void virtual setFrameColor(vec4 c);
+	virtual void setBackgroundColor(vec4 c);
+	virtual void setFrameColor(vec4 c);
+	vec4 getCollisionRect();
 	vec4 getBackgroundColor();
 	vec4 getFrameColor();
 	virtual void updateCollisionRect(float x,float y);
@@ -61,10 +63,13 @@ public:
 	virtual void showFrame();
 	virtual void show();
 	virtual void create(float x, float y, float w, float h,int id);
-	virtual EventTraveller intersect(int x, int y);
+	virtual bool intersect(int x, int y);
 	virtual void leftMBTNReleased();
 	virtual void setTexture(GLuint texH);
 	virtual void handleKeyDown(char c);
+	virtual void mouseHover(int x, int y);
+	virtual void handleLeftClick(int x, int y);
+	
 };
 
 #endif // BASECONTROL_H

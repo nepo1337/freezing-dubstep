@@ -47,10 +47,11 @@ private:
 	std::vector<Window*> windows;
 	glm::mat4 orthoCam;
 	GLSLProgram guiShader;
+	bool mouseIsDown;
 public:
 	GuiSystem();
 	virtual ~GuiSystem();
-	EventTraveller handleEvent(const sf::Event &e);
+	bool handleEvent(const sf::Event &e);
 	void addWindow(Window &w);
 	void draw();
 	void init(int w, int h);

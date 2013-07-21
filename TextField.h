@@ -50,10 +50,10 @@ public:
 	void setText(string text);
 	void draw(GLSLProgram &shader);
 	void create(float x, float y, float w, float h,int id,FontInfo f, GLuint texh);
-	EventTraveller intersect(int x, int y);
 	void handleKeyDown(char c);
 	void setMaxCharLength(int l);
-
+	string getText();
+	void handleLeftClick(int x, int y);
 };
 
 #endif // TEXTFIELD_H

@@ -35,15 +35,14 @@ CheckBox::~CheckBox()
 {
 
 }
-EventTraveller CheckBox::intersect(int x, int y)
+
+void CheckBox::handleLeftClick(int x, int y)
 {
-	EventTraveller t = BaseControl::intersect(x, y);
-	if(t.hasValidID())
+	if(BaseControl::intersect(x, y))
 	{
-	    this->checked=!this->checked;
-	    this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
+		this->checked=!this->checked;
+		this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
 	}
-	return t;
 }
 
 

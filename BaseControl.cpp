@@ -42,6 +42,8 @@ BaseControl::BaseControl()
 	controlID=0;
 	collisionRect=vec4(0.0f);
 	this->hasTex=false;
+	mouseButtonDown=false;
+	this->mouseOver=false;
 }
 
 BaseControl::~BaseControl()
@@ -160,18 +162,17 @@ void BaseControl::setFrameColor(vec4 c)
 {
 	this->frameColor=c;
 }
-EventTraveller BaseControl::intersect(int x, int y)
+bool BaseControl::intersect(int x, int y)
 {
-	EventTraveller t;
+	bool intersected = false;
 	if(x>this->collisionRect.x&&x<this->collisionRect.x+this->collisionRect.z)
 	{
 		if(y>this->collisionRect.y&&y<this->collisionRect.y+this->collisionRect.w)
 		{
-			t.setID(this->controlID);
-			t.setOffset(vec2(x-this->collisionRect.x,y-this->collisionRect.y));
+			intersected=true;
 		}
 	}
-	return t;
+	return intersected;
 }
 void BaseControl::updateCollisionRect(float x, float y)
 {
@@ -180,7 +181,7 @@ void BaseControl::updateCollisionRect(float x, float y)
 }
 void BaseControl::leftMBTNReleased()
 {
-
+	this->mouseButtonDown=false;
 }
 
 
@@ -192,4 +193,16 @@ void BaseControl::setTexture(GLuint texH)
 void BaseControl::handleKeyDown(char c)
 {
 
+}
+vec4 BaseControl::getCollisionRect()
+{
+	return this->collisionRect;
+}
+void BaseControl::mouseHover(int x, int y)
+{
+	this->mouseOver=this->intersect(x,y);
+}
+void BaseControl::handleLeftClick(int x, int y)
+{
+	mouseButtonDown=this->intersect(x,y);
 }

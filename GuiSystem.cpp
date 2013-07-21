@@ -45,6 +45,7 @@ void GuiSystem::init(int w, int h)
 GuiSystem::GuiSystem()
 {
 	this->orthoCam = glm::ortho(0.0f, (float)10,(float)10,0.0f, -1.f, 1.f);
+	this->mouseIsDown=false;
 }
 
 GuiSystem::~GuiSystem()
@@ -52,9 +53,10 @@ GuiSystem::~GuiSystem()
 	
 }
 
-EventTraveller GuiSystem::handleEvent(const sf::Event &e)
+bool GuiSystem::handleEvent(const sf::Event &e)
 {
-	EventTraveller t;
+	bool eventHandled=false;
+
 	if(e.type== sf::Event::Resized)
 	{
 		// adjust the viewport when the window is resized
@@ -64,12 +66,21 @@ EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 	}
 	if(e.type== sf::Event::KeyPressed)
 	{
-		t.setEventType(EventType::KEY_PRESSED);
 		//this->translateSfKeyCode(e.key.code);
+		eventHandled=true;
 		
 	}
 	if(e.type== sf::Event::KeyReleased)
-		t.setEventType(EventType::KEY_RELEASED);
+	{
+		eventHandled=true;
+	}
+	if(e.type==sf::Event::MouseMoved)
+	{
+		for(int i=0;i<this->windows.size();i++)
+		{
+			this->windows[i]->mouseHover(e.mouseMove.x,e.mouseMove.y);
+		}
+	}
 	if(e.type == sf::Event::TextEntered)
 	{
 		if(e.text.unicode < 128)
@@ -77,43 +88,56 @@ EventTraveller GuiSystem::handleEvent(const sf::Event &e)
 			for(int i=0;i<this->windows.size();i++)
 			{
 				this->windows[i]->handleKeyDown(static_cast<char>(e.text.unicode));
+				eventHandled=true;
 			}
 		}
 	}
 	if(e.type== sf::Event::MouseButtonPressed)
 	{
+		this->mouseIsDown=true;
 		switch(e.mouseButton.button)
 		{
 			case sf::Mouse::Left:
 				for(int i=0;i<this->windows.size();i++)
 				{
-					t = this->windows[i]->handleLeftClick(e.mouseButton.x,e.mouseButton.y);
+					this->windows[i]->handleLeftClick(e.mouseButton.x,e.mouseButton.y);
 				}
-				t.setEventType(EventType::LEFT_MOUSE_CLICK);
+				eventHandled=true;
 				break;
 			case sf::Mouse::Right:
-				t.setEventType(EventType::RIGHT_MOUSE_CLICK);
+				eventHandled=true;
 				break;
 		}
 	}
 	if(e.type== sf::Event::MouseButtonReleased)
 	{
+		this->mouseIsDown=false;
 		switch(e.mouseButton.button)
 		{
 			case sf::Mouse::Left:
-				t.setEventType(EventType::LEFT_MOUSE_RELEASE);
 				for(int i=0;i<this->windows.size();i++)
 				{
 					this->windows[i]->handleLeftRelease();
 				}
+				eventHandled=true;
 				break;
 			case sf::Mouse::Right:
-				t.setEventType(EventType::RIGHT_MOUSE_RELEASED);
+				eventHandled=true;
 				break;
 		}
 	}
-		
-	return t;
+	/*
+	if(this->mouseIsDown)
+	{
+		if(e.type == sf::Event::MouseMoved)
+		{
+			for(int i=0;i<this->windows.size();i++)
+			{
+				t = this->windows[i]->handleLeftClick(e.mouseMove.x,e.mouseMove.y);
+			}
+		}
+	}*/
+	return eventHandled;
 }
 
 void GuiSystem::addWindow(Window& w)

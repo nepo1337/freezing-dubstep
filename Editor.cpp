@@ -81,6 +81,7 @@ void Editor::run()
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
+			if(!guiS.handleEvent(event))
 			switch(event.type)
 			{
 				case sf::Event::Closed:
@@ -112,7 +113,7 @@ void Editor::run()
 					}
 				break;
 			}
-			this->handleGUIEvents(guiS.handleEvent(event));
+			
 		}
 		//poll move camera
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -149,6 +150,7 @@ void Editor::run()
 		clock.restart();
 	}
 }
+/*
 void Editor::handleGUIEvents(EventTraveller t)
 {
 	if(t.getID()==1&&t.getEventType()==EventType::LEFT_MOUSE_CLICK)
@@ -173,4 +175,4 @@ void Editor::handleGUIEvents(EventTraveller t)
 	{
 		cout<<"SLUTA TA PÅ MIG!"<<endl;
 	}
-}
+}*/

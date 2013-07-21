@@ -36,8 +36,8 @@ private:
 public:
 	Button();
 	virtual ~Button();
-	EventTraveller intersect(int x, int y);
 	void leftMBTNReleased();
+	void handleLeftClick(int x, int y);
 };
 
 #endif // BUTTON_H

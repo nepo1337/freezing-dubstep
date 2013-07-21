@@ -12,7 +12,6 @@
 #include "GuiSystem.h"
 #include "Window.h"
 #include "Button.h"
-#include "EventTraveller.h"
 #include "VerticalSlider.h"
 #include "CheckBox.h"
 #include "Sprite.h"
@@ -40,7 +39,7 @@ private:
 	HorizontalSlider hS;
 	TextLabel textL;
 	TextField textF;
-	void handleGUIEvents(EventTraveller t);
+	//void handleGUIEvents(EventTraveller t);
 	float bOffX,bOffY;
 	bool followWindow;
 public:

@@ -36,8 +36,8 @@ private:
 public:
     CheckBox();
     virtual ~CheckBox();
-    EventTraveller intersect(int x, int y);
     bool isChecked();
+    void handleLeftClick(int x, int y);
 };
 
 #endif // CHECKBOX_H

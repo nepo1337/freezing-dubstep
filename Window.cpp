@@ -59,22 +59,18 @@ void Window::draw(GLSLProgram &shader)
 		this->controls[i]->draw(shader);
 	}
 }
-EventTraveller Window::handleLeftClick(int x, int y)
+void Window::handleLeftClick(int x, int y)
 {
-	EventTraveller t;
 	//if the x,y coordinates intersects the window
-	if(this->intersect(x,y).hasValidID())
+	if(this->intersect(x,y))
 	{
-		bool found=false;
 		//if a control is intersected, return its id
-		for(int i=0;i<this->controls.size()&&!found;i++)
+		for(int i=0;i<this->controls.size();i++)
 		{
-			t=controls[i]->intersect(x,y);
-			if(t.hasValidID())
-				found=true;
+			controls[i]->handleLeftClick(x,y);
 		}
 	}
-	return t;
+
 }
 vec2 Window::getPosition()
 {
@@ -146,5 +142,15 @@ void Window::handleKeyDown(char c)
 	for(int i=0;i<this->controls.size();i++)
 	{
 		this->controls[i]->handleKeyDown(c);
+	}
+}
+void Window::mouseHover(int x, int y)
+{
+	if(this->intersect(x,y))
+	{
+		for(int i=0;i<this->controls.size();i++)
+		{
+			this->controls[i]->mouseHover(x,y);
+		}
 	}
 }

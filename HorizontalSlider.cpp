@@ -69,20 +69,21 @@ void HorizontalSlider::setScrollButtonFrameColor(vec4 c)
 	this->scrollButton.setFrameColor(c);
 }
 
-EventTraveller HorizontalSlider::intersect(int x, int y)
+
+void HorizontalSlider::mouseHover(int x, int y)
 {
-	EventTraveller t = BaseControl::intersect(x, y);
-	if(t.hasValidID())
+	BaseControl::mouseHover(x,y);
+	if(this->mouseOver&&this->mouseButtonDown)
 	{
-		float yVal=this->y-this->height*0.05+t.getOffset().y;
+		float yVal=this->y-this->height*0.05+(y-this->collisionRect.y);
 		this->bVal = y-this->collisionRect.y;
 		this->bVal/=this->height;
-		if(t.getOffset().y<=this->height*0.05)
+		if((y-this->collisionRect.y)<=this->height*0.05)
 		{
 			yVal=this->y;
 			this->bVal=0;
 		}
-		if(t.getOffset().y>=this->height-this->height*0.05)
+		if((y-this->collisionRect.y)>=this->height-this->height*0.05)
 		{
 			yVal=this->y+this->height-this->height*0.1;
 			this->bVal=1;
@@ -90,8 +91,31 @@ EventTraveller HorizontalSlider::intersect(int x, int y)
 
 		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1,-1);
 	}
-	return t;
 }
+
+void HorizontalSlider::handleLeftClick(int x, int y)
+{
+	BaseControl::handleLeftClick(x,y);
+	if(BaseControl::intersect(x,y))
+	{
+		float yVal=this->y-this->height*0.05+(y-this->collisionRect.y);
+		this->bVal = y-this->collisionRect.y;
+		this->bVal/=this->height;
+		if((y-this->collisionRect.y)<=this->height*0.05)
+		{
+			yVal=this->y;
+			this->bVal=0;
+		}
+		if((y-this->collisionRect.y)>=this->height-this->height*0.05)
+		{
+			yVal=this->y+this->height-this->height*0.1;
+			this->bVal=1;
+		}
+
+		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1,-1);
+	}
+}
+
 void HorizontalSlider::updateCollisionRect(float x, float y)
 {
 	this->scrollButton.updateCollisionRect(x,y);

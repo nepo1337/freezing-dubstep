@@ -42,13 +42,14 @@ public:
 	void setBackgroundColor(vec4 c);
 	void setFrameColor(vec4 c);
 	void updateCollisionRect(float x, float y);
-	EventTraveller intersect(int x, int y);
 	float getNormalizedSliderValue();
 	void setNormalizedSliderValue(float f);
 	void setScrollButtonTexture(GLuint tex);
 	void hideScrollButtonFrame();
 	void setScrollButtonBackgroundColor(vec4 c);
 	void setScrollButtonFrameColor(vec4 c);
+	void handleLeftClick(int x, int y);
+	void mouseHover(int x, int y);
 };
 
 #endif // VERTICALSLIDER_H

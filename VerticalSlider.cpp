@@ -29,6 +29,8 @@
 VerticalSlider::VerticalSlider()
 {
 	this->bVal=0;
+	this->hasScrollButtonTriTex=false;
+	this->scrollButtonTex=0;
 }
 
 VerticalSlider::~VerticalSlider()
@@ -39,6 +41,7 @@ VerticalSlider::~VerticalSlider()
 void VerticalSlider::handleLeftClick(int x, int y)
 {
 	BaseControl::handleLeftClick(x,y);
+	
 	if(this->mouseButtonDown)
 	{
 		//0.051, 0.05 caused errors O_O?
@@ -61,12 +64,21 @@ void VerticalSlider::handleLeftClick(int x, int y)
 			this->bVal=1;
 		}
 		
-		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height);
+		this->scrollButton.setCollisionRect(vec4(this->collisionRect.x+xVal-this->x,this->collisionRect.y,this->width*0.1,this->height));
+		if(this->hasScrollButtonTriTex)
+		{
+			this->scrollButton.setTriTexture(this->scrollButtonTex);
+			this->scrollButton.handleLeftClick(x,y);
+			this->scrollButton.mouseHover(x,y);
+		}
 	}
+	
 }
-void VerticalSlider::mouseHover(int x, int y)
+bool VerticalSlider::mouseHover(int x, int y)
 {
 	BaseControl::mouseHover(x,y);
+	
 	if(this->mouseOver&&this->mouseButtonDown)
 	{
 		//0.051, 0.05 caused errors O_O?
@@ -88,16 +100,23 @@ void VerticalSlider::mouseHover(int x, int y)
 			xVal=this->x+this->width-this->width*0.1;
 			this->bVal=1;
 		}
-		
-		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+		this->scrollButton.create(xVal,this->y,this->width*0.1,this->height);
+		this->scrollButton.setCollisionRect(vec4(this->collisionRect.x+xVal-this->x,this->collisionRect.y,this->width*0.1,this->height));
+		if(this->hasScrollButtonTriTex)
+		{
+			this->scrollButton.setTriTexture(this->scrollButtonTex);
+			this->scrollButton.handleLeftClick(x,y);
+		}
 	}
+	this->scrollButton.mouseHover(x,y);
+	return this->mouseOver;
 }
 
-void VerticalSlider::create(float x, float y, float w, float h, int id)
+void VerticalSlider::create(float x, float y, float w, float h)
 {
-	BaseControl::create(x,y,w,h,id);
+	BaseControl::create(x,y,w,h);
 	//w*0.1, the slider button is always 10% of the width
-	this->scrollButton.create(x,y,w*0.1,h,-1);
+	this->scrollButton.create(x,y,w*0.1,h);
 }
 void VerticalSlider::draw(GLSLProgram& shader)
 {
@@ -143,7 +162,7 @@ void VerticalSlider::setNormalizedSliderValue(float f)
 	if(this->bVal>1)
 		this->bVal=1;
 	
-	float xVal=this->x-this->width*0.05+this->width*this->bVal;
+	float xVal=this->x-this->width*0.051+this->width*this->bVal;
 	//under 10% the slider should stop at the bottom
 	if(this->bVal<0.1)
 	{
@@ -154,7 +173,10 @@ void VerticalSlider::setNormalizedSliderValue(float f)
 	{
 		xVal=this->x+this->width-this->width*0.1;
 	}
-	this->scrollButton.create(xVal,this->y,this->width*0.1,this->height,-1);
+	this->scrollButton.create(xVal,this->y,this->width*0.1,this->height);
+	this->scrollButton.setCollisionRect(vec4(this->collisionRect.x+xVal-this->x,this->collisionRect.y,this->width*0.1,this->height));
+	if(this->hasScrollButtonTriTex)
+		this->scrollButton.setTriTexture(this->scrollButtonTex);
 
 }
 void VerticalSlider::setScrollButtonTexture(GLuint tex)
@@ -165,4 +187,25 @@ void VerticalSlider::setScrollButtonTexture(GLuint tex)
 void VerticalSlider::hideScrollButtonFrame()
 {
 	this->scrollButton.hideFrame();
+}
+void VerticalSlider::setScrollButtonTriTexture(GLuint tex)
+{
+	this->hasScrollButtonTriTex=true;
+	this->scrollButtonTex=tex;
+	this->scrollButton.setTriTexture(tex);
+}
+void VerticalSlider::leftMBTNReleased()
+{
+    BaseControl::leftMBTNReleased();
+    this->scrollButton.leftMBTNReleased();
+}
+void VerticalSlider::hide()
+{
+    BaseControl::hide();
+    this->scrollButton.hide();
+}
+void VerticalSlider::show()
+{
+    BaseControl::show();
+    this->scrollButton.show();
 }

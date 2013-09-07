@@ -29,6 +29,7 @@
 Window::Window()
 {
 	this->modelMatrix=mat4(1.0f);
+	this->lastClickOffset=vec2(0,0);
 }
 
 Window::~Window()
@@ -46,17 +47,20 @@ void Window::addControl(BaseControl &c)
 }
 void Window::draw(GLSLProgram &shader)
 {
-	glBindVertexArray(this->VAOh);
-	shader.setUniform("modelMatrix",this->modelMatrix);
-	shader.setUniform("color",this->bgColor);
-	shader.setSubroutine(GLSLShader::FRAGMENT, "defOut");
-	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-	shader.setUniform("color",this->frameColor);
-	glDrawArrays(GL_LINE_STRIP,4,5);
-	
-	for(int i=0;i<this->controls.size();i++)
+	if(this->visible)
 	{
-		this->controls[i]->draw(shader);
+		glBindVertexArray(this->VAOh);
+		shader.setUniform("modelMatrix",this->modelMatrix);
+		shader.setUniform("color",this->bgColor);
+		shader.setSubroutine(GLSLShader::FRAGMENT, "defOut");
+		glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+		shader.setUniform("color",this->frameColor);
+		glDrawArrays(GL_LINE_STRIP,4,5);
+		
+		for(int i=0;i<this->controls.size();i++)
+		{
+			this->controls[i]->draw(shader);
+		}
 	}
 }
 void Window::handleLeftClick(int x, int y)
@@ -64,6 +68,8 @@ void Window::handleLeftClick(int x, int y)
 	//if the x,y coordinates intersects the window
 	if(this->intersect(x,y))
 	{
+		this->lastClickOffset.x = this->pos.x-x;
+		this->lastClickOffset.y = this->pos.y-y;
 		//if a control is intersected, return its id
 		for(int i=0;i<this->controls.size();i++)
 		{
@@ -90,9 +96,8 @@ void Window::setPosition(vec2 p)
 		this->controls[i]->updateCollisionRect(this->pos.x,this->pos.y);
 	}
 }
-void Window::create(float x, float y, float w, float h, int id)
+void Window::create(float x, float y, float w, float h)
 {
-	this->controlID=id;
 	this->x=x;
 	this->y=y;
 	this->width=w;
@@ -144,13 +149,29 @@ void Window::handleKeyDown(char c)
 		this->controls[i]->handleKeyDown(c);
 	}
 }
-void Window::mouseHover(int x, int y)
+bool Window::mouseHover(int x, int y)
 {
-	if(this->intersect(x,y))
+	this->mouseOver=this->intersect(x,y);
+	if(this->mouseOver)
 	{
 		for(int i=0;i<this->controls.size();i++)
 		{
 			this->controls[i]->mouseHover(x,y);
 		}
 	}
+	
+	return this->mouseOver;
+}
+vec2 Window::getClickOffset()
+{
+	return this->lastClickOffset;
+}
+bool Window::checkTextfieldsActive()
+{
+	bool activated=false;
+	for(int i=0;i<this->controls.size()&&!activated;i++)
+	{
+		activated = this->controls[i]->isActivated();
+	}
+	return activated;
 }

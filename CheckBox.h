@@ -27,7 +27,7 @@
 #ifndef CHECKBOX_H
 #define CHECKBOX_H
 #include "BaseControl.h"
-#include "EventTraveller.h"
+
 
 class CheckBox : public BaseControl
 {

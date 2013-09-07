@@ -31,16 +31,15 @@ private:
 	Camera cam;
 	int mousedx,mousedy;
 	bool running;
-	Window gWin;
-	Button gB;
+	Window gWin,propsWin,fileWindow,toolsWindow;
+	Button gB,fileButton,propsButton,toolsButton,updateButton;
 	VerticalSlider vS;
 	CheckBox cB;
 	Sprite sP;
 	HorizontalSlider hS;
-	TextLabel textL;
-	TextField textF;
+	TextLabel textL,propsLabel,toolLabel,wireframeLabel,nameLabel,widthHeightLabel,updateLabel;
+	TextField textF,mapWidth,mapHeight;
 	//void handleGUIEvents(EventTraveller t);
-	float bOffX,bOffY;
 	bool followWindow;
 public:
 	Editor();

@@ -35,10 +35,12 @@ class HorizontalSlider : public BaseControl
 private:
 	Button scrollButton;
 	float bVal;
+	bool hasScrollButtonTriTex;
+	GLuint scrollButtonTex;
 public:
 	HorizontalSlider();
 	virtual ~HorizontalSlider();
-	void create(float x, float y, float w, float h, int id);
+	void create(float x, float y, float w, float h);
 	void draw(GLSLProgram &shader);
 	void setBackgroundColor(vec4 c);
 	void setFrameColor(vec4 c);
@@ -46,11 +48,15 @@ public:
 	float getNormalizedSliderValue();
 	void setNormalizedSliderValue(float f);
 	void setScrollButtonTexture(GLuint tex);
+	void setScrollButtonTriTexture(GLuint tex);
 	void hideScrollButtonFrame();
 	void setScrollButtonBackgroundColor(vec4 c);
 	void setScrollButtonFrameColor(vec4 c);
 	void handleLeftClick(int x, int y);
-	void mouseHover(int x, int y);
+	bool mouseHover(int x, int y);
+	void leftMBTNReleased();
+	void hide();
+	void show();
 };
 
 #endif // HORIZONTALSLIDER_H

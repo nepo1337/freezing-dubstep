@@ -43,10 +43,9 @@ protected:
 	vec4 collisionRect;
 	bool visible,frameVisible;
 	float x,y,width,height;
-	GLuint VAOh,VBOh,VBOuh,texHandle;
+	GLuint VAOh,VBOh,VBOuh,VBO2uh,VBO3uh,texHandle;
 	vec4 bgColor,frameColor;
-	int controlID;
-	bool hasTex,mouseOver,mouseButtonDown;
+	bool hasTex,hasTriTex,mouseOver,mouseButtonDown,released, isActive;
 public:
 	BaseControl();
 	virtual ~BaseControl()=0;
@@ -56,19 +55,24 @@ public:
 	vec4 getCollisionRect();
 	vec4 getBackgroundColor();
 	vec4 getFrameColor();
+	void setCollisionRect(vec4 rect);
 	virtual void updateCollisionRect(float x,float y);
 	virtual void draw(GLSLProgram &shader);
 	virtual void hide();
 	virtual void hideFrame();
 	virtual void showFrame();
 	virtual void show();
-	virtual void create(float x, float y, float w, float h,int id);
+	virtual void create(float x, float y, float w, float h);
 	virtual bool intersect(int x, int y);
 	virtual void leftMBTNReleased();
 	virtual void setTexture(GLuint texH);
+	virtual void setTriTexture(GLuint texH);
 	virtual void handleKeyDown(char c);
-	virtual void mouseHover(int x, int y);
+	virtual bool mouseHover(int x, int y);
 	virtual void handleLeftClick(int x, int y);
+	virtual bool isDown();
+	virtual bool wasReleased();
+	virtual bool isActivated();
 	
 };
 

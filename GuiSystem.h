@@ -37,7 +37,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
 #include "GLSLProgram.h"
-#include "EventTraveller.h"
+
 
 using namespace std;
 
@@ -47,7 +47,7 @@ private:
 	std::vector<Window*> windows;
 	glm::mat4 orthoCam;
 	GLSLProgram guiShader;
-	bool mouseIsDown;
+	bool mouseIsDown,textfieldActivated;
 public:
 	GuiSystem();
 	virtual ~GuiSystem();
@@ -55,6 +55,7 @@ public:
 	void addWindow(Window &w);
 	void draw();
 	void init(int w, int h);
+	bool isTextfieldsActivated();
 
 };
 

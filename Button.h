@@ -27,7 +27,6 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 #include "BaseControl.h"
-#include "EventTraveller.h"
 
 class Button: public BaseControl
 {
@@ -38,6 +37,7 @@ public:
 	virtual ~Button();
 	void leftMBTNReleased();
 	void handleLeftClick(int x, int y);
+	
 };
 
 #endif // BUTTON_H

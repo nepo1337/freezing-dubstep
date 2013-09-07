@@ -43,7 +43,7 @@ public:
     virtual ~TextLabel();
     void setText(string text);
     void draw(GLSLProgram &shader);
-    void create(float x, float y, float w, float h,int id,FontInfo f, GLuint texh);
+    void create(float x, float y, float w, float h,FontInfo f, GLuint texh);
 };
 
 #endif // TEXTLABEL_H

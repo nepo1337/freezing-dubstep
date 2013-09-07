@@ -45,9 +45,9 @@ void TextLabel::draw(GLSLProgram& shader)
     BaseControl::draw(shader);
     this->text.draw(shader);
 }
-void TextLabel::create(float x, float y, float w, float h, int id,FontInfo f, GLuint texh)
+void TextLabel::create(float x, float y, float w, float h,FontInfo f, GLuint texh)
 {
-    BaseControl::create(x, y, w, h, id);
+    BaseControl::create(x, y, w, h);
     this->fontInfo=f;
     this->text.create(this->x+2,this->y,this->height/this->fontInfo.getPixHeight(),this->fontInfo,texh,"");
 }

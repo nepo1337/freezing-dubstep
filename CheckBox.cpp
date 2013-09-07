@@ -38,6 +38,7 @@ CheckBox::~CheckBox()
 
 void CheckBox::handleLeftClick(int x, int y)
 {
+	BaseControl::handleLeftClick(x,y);
 	if(BaseControl::intersect(x, y))
 	{
 		this->checked=!this->checked;

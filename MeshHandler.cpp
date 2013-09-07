@@ -34,7 +34,7 @@ void MeshHandler::init()
 	glUseProgram(0);
 	
 	TextureSet t;
-	t.create("textures/green","greenSet","grass_02.png","grass_07.png","dirt_01.png","dirt_05.png");
+	t.create("textures/green","greenSet","grass_02.png","grass_07.png","dirt01.png","dirt_05.png");
 	TextureHandler::addTextureSet(t);
 }
 

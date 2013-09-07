@@ -32,7 +32,6 @@
 #include <glm/gtx/transform2.hpp>
 #include <vector>
 #include <iostream>
-#include "EventTraveller.h"
 #include "FontInfo.h"
 
 using namespace glm;
@@ -43,6 +42,7 @@ private:
 	vector<BaseControl*> controls;
 	mat4 modelMatrix;
 	vec3 pos;
+	vec2 lastClickOffset;
 	
 public:
 	Window();
@@ -53,9 +53,11 @@ public:
 	void handleLeftRelease();
 	void setPosition(vec2 p);
 	vec2 getPosition();
-	void create(float x, float y, float w, float h, int id);
+	void create(float x, float y, float w, float h);
 	void handleKeyDown(char c);
-	void mouseHover(int x, int y);
+	bool mouseHover(int x, int y);
+	vec2 getClickOffset();
+	bool checkTextfieldsActive();
 };
 
 #endif // WINDOW_H

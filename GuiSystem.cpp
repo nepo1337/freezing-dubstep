@@ -36,16 +36,20 @@ void GuiSystem::init(int w, int h)
 
 	this->guiShader.bindAttribLocation(0,"vertexPosition");
 	this->guiShader.bindAttribLocation(1,"vertexUV");
+	this->guiShader.bindAttribLocation(2,"vertexUV2");
+	this->guiShader.bindAttribLocation(3,"vertexUV3");
 	this->guiShader.link();
 	cout << this->guiShader.log()<<endl;
 	this->guiShader.use();
 	this->guiShader.setUniform("orthoMatrix",this->orthoCam);
+	this->guiShader.setUniform("uvIndex",0);
 }
 
 GuiSystem::GuiSystem()
 {
 	this->orthoCam = glm::ortho(0.0f, (float)10,(float)10,0.0f, -1.f, 1.f);
 	this->mouseIsDown=false;
+	this->textfieldActivated=false;
 }
 
 GuiSystem::~GuiSystem()
@@ -88,9 +92,9 @@ bool GuiSystem::handleEvent(const sf::Event &e)
 			for(int i=0;i<this->windows.size();i++)
 			{
 				this->windows[i]->handleKeyDown(static_cast<char>(e.text.unicode));
-				eventHandled=true;
 			}
 		}
+		eventHandled=true;
 	}
 	if(e.type== sf::Event::MouseButtonPressed)
 	{
@@ -137,6 +141,14 @@ bool GuiSystem::handleEvent(const sf::Event &e)
 			}
 		}
 	}*/
+	
+	//checks if any text input is being handeled, so one seperate input stuff
+	this->textfieldActivated=false;
+	for(int i=0;i<this->windows.size();i++)
+	{
+		if(this->windows[i]->checkTextfieldsActive())
+			this->textfieldActivated=true;
+	}
 	return eventHandled;
 }
 
@@ -171,3 +183,7 @@ void GuiSystem::draw()
 	glBindVertexArray(0);
 }
 
+bool GuiSystem::isTextfieldsActivated()
+{
+	return this->textfieldActivated;
+}

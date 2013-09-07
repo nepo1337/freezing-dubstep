@@ -26,7 +26,7 @@ Editor::Editor()
 	this->mousedx=this->mousedy=0;
 	
 	sf::Image image;
-	image.loadFromFile("sfml.png");
+	image.loadFromFile("textures/green/dirt01small.png");
 	GLuint th=TextureHandler::uploadSimpleTexLinear(image);
 	sf::Image scimg;
 	scimg.loadFromFile("add.png");
@@ -40,35 +40,77 @@ Editor::Editor()
 
 	FontInfo f;
 	f.init(fI,"fntletters.txt",26,4);
-	textL.create(0,0,40,20,-1,f,fontH);
-	textL.setText("=Menu=");
+	textL.create(0,20,40,20,f,fontH);
+	textL.setText("File");
+	propsLabel.create(40,20,40,20,f,fontH);
+	propsLabel.setText("Props");
+	toolLabel.create(90,20,40,20,f,fontH);
+	toolLabel.setText("Tools");
+	wireframeLabel.create(25,10,0,15,f,fontH);
+	wireframeLabel.setText("Wireframe");
+	nameLabel.create(5,10,0,15,f,fontH);
+	nameLabel.setText("Mapname:");
+	widthHeightLabel.create(5,45,0,15,f,fontH);
+	widthHeightLabel.setText("Width:     Height:");
 	
-	textF.create(50,40,70,20,9,f,fontH);
-	//textF.setText("");
+	updateLabel.create(5,90,0,15,f,fontH);
+	updateLabel.setText("Update");
 	
-	gB.create(0,0,100,20,1);
-	vS.create(10,75,90,10,2);
-	cB.create(10,40,20,20,3);
-	sP.create(10,90,90,90,4);
-	sP.setTexture(th);
-	sP.hideFrame();
-	hS.create(105,90,10,90,5);
-	gWin.create(20,40,150,200,0);
+	textF.create(5,25,140,15,f,fontH);
+	mapWidth.create(10,60,40,15,f,fontH);
+	mapWidth.setText("1");
+	mapHeight.create(70,60,40,15,f,fontH);
+	mapHeight.setText("1");
+	
+	gB.create(0,0,150,20);
+	fileButton.create(0,20,40,20);
+	propsButton.create(40,20,50,20);
+	toolsButton.create(90,20,60,20);
+	updateButton.create(5,90,60,15);
+
+	vS.create(10,75,90,10);
+	cB.create(5,10,15,15);
+	sP.create(10,90,90,90);
+	sP.setTriTexture(th);
+	hS.create(105,90,10,90);
+	gWin.create(20,40,150,40);
+	propsWin.create(20,80,150,160);
+	propsWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
+	propsWin.setFrameColor(vec4(0.2,0.3,0.2,1.0));
+	propsWin.hide();
+	fileWindow.create(20,80,150,160);
+	fileWindow.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
+	fileWindow.setFrameColor(vec4(0.2,0.3,0.2,1.0));
+	toolsWindow.create(20,80,150,160);
+	toolsWindow.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
+	toolsWindow.setFrameColor(vec4(0.2,0.3,0.2,1.0));
+	//fileWindow.hide();
 	gWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
 	gWin.setFrameColor(vec4(0.2,0.3,0.2,1.0));
 	guiS.init(800,600);
 	guiS.addWindow(gWin);
+	guiS.addWindow(propsWin);
+	guiS.addWindow(toolsWindow);
+	guiS.addWindow(fileWindow);
 	gWin.addControl(gB);
-	gWin.addControl(vS);
-	gWin.addControl(cB);
-	gWin.addControl(sP);
-	gWin.addControl(hS);
+	propsWin.addControl(cB);
+	propsWin.addControl(wireframeLabel);
+	fileWindow.addControl(textF);
+	fileWindow.addControl(nameLabel);
+	fileWindow.addControl(mapWidth);
+	fileWindow.addControl(mapHeight);
+	fileWindow.addControl(widthHeightLabel);
+	fileWindow.addControl(updateButton);
+	fileWindow.addControl(updateLabel);
+	gWin.addControl(fileButton);
 	gWin.addControl(textL);
-	gWin.addControl(textF);
+	gWin.addControl(propsButton);
+	gWin.addControl(propsLabel);
+	gWin.addControl(toolsButton);
+	gWin.addControl(toolLabel);
+	gB.setBackgroundColor(vec4(0.4,0.4,0.9,1.0));
 
 	this->followWindow=false;
-	this->bOffX=0;
-	this->bOffY=0;
 }
 
 void Editor::run()
@@ -115,30 +157,70 @@ void Editor::run()
 			}
 			
 		}
-		//poll move camera
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-			cam.moveForeward(0.2);
-
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-			cam.moveBackward(0.2);
-		
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			cam.strafeLeft(0.2);
-		
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			cam.strafeRight(0.2);
-
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+		if(!this->guiS.isTextfieldsActivated())
 		{
-			cam.rotateLeft(mousedx-sf::Mouse::getPosition(this->window).x);
-			cam.rotateUp(mousedy-sf::Mouse::getPosition(this->window).y);
+			//poll move camera
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+				cam.moveForeward(0.2);
+
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+				cam.moveBackward(0.2);
+			
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+				cam.strafeLeft(0.2);
+			
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+				cam.strafeRight(0.2);
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+			{
+				cam.rotateLeft(mousedx-sf::Mouse::getPosition(this->window).x);
+				cam.rotateUp(mousedy-sf::Mouse::getPosition(this->window).y);
+			}
 		}
+		
 		this->mousedx = sf::Mouse::getPosition(this->window).x;
 		this->mousedy = sf::Mouse::getPosition(this->window).y;
-
+		
+		followWindow=false;
+		if(gB.isDown())
+		{
+			followWindow=true;
+		}
+		if(fileButton.wasReleased())
+		{
+			fileWindow.show();
+			propsWin.hide();
+			toolsWindow.hide();
+		}
+		if(propsButton.wasReleased())
+		{
+			propsWin.show();
+			fileWindow.hide();
+			toolsWindow.hide();
+		}
+		if(this->toolsButton.wasReleased())
+		{
+			propsWin.hide();
+			fileWindow.hide();
+			toolsWindow.show();
+		}
+		if(this->updateButton.wasReleased())
+		{
+			int w =1;
+			int h = 1;
+			w=atoi(mapWidth.getText().c_str());
+			h=atoi(mapHeight.getText().c_str());
+			this->meshHandler.setWidthHeight(w,h);
+		}
+		if(cB.wasReleased())
+			this->meshHandler.toggleWireframe();
 		if(this->followWindow)
 		{
-			this->gWin.setPosition(vec2((float)sf::Mouse::getPosition(this->window).x-bOffX,(float)sf::Mouse::getPosition(this->window).y-bOffY));
+			this->gWin.setPosition(vec2((float)sf::Mouse::getPosition(this->window).x+gWin.getClickOffset().x,(float)sf::Mouse::getPosition(this->window).y+gWin.getClickOffset().y));
+			this->fileWindow.setPosition(vec2(gWin.getPosition().x,gWin.getPosition().y+40));
+			this->propsWin.setPosition(vec2(gWin.getPosition().x,gWin.getPosition().y+40));
+			this->toolsWindow.setPosition(vec2(gWin.getPosition().x,gWin.getPosition().y+40));
 		}
 		// clear the buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

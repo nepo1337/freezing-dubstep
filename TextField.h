@@ -32,7 +32,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform2.hpp>
-#include "EventTraveller.h"
 #include <iostream>
 
 using namespace std;
@@ -42,18 +41,19 @@ class TextField : public BaseControl
 private:
 	FontInfo fontInfo;
 	Text text;
-	bool isActive;
+	
 	int maxChars;
 public:
 	TextField();
 	virtual ~TextField();
 	void setText(string text);
 	void draw(GLSLProgram &shader);
-	void create(float x, float y, float w, float h,int id,FontInfo f, GLuint texh);
+	void create(float x, float y, float w, float h,FontInfo f, GLuint texh);
 	void handleKeyDown(char c);
 	void setMaxCharLength(int l);
 	string getText();
 	void handleLeftClick(int x, int y);
+	bool isActivated();
 };
 
 #endif // TEXTFIELD_H

@@ -30,6 +30,7 @@ TextField::TextField()
 {
 	this->isActive=false;
 	this->maxChars=999;
+	this->isActive=false;
 }
 
 TextField::~TextField()
@@ -37,9 +38,9 @@ TextField::~TextField()
 	
 }
 
-void TextField::create(float x, float y, float w, float h, int id, FontInfo f, GLuint texh)
+void TextField::create(float x, float y, float w, float h, FontInfo f, GLuint texh)
 {
-	BaseControl::create(x, y, w, h, id);
+	BaseControl::create(x, y, w, h);
 	this->fontInfo=f;
 	this->text.create(this->x+2,this->y,this->height/this->fontInfo.getPixHeight(),this->fontInfo,texh,"");
 }
@@ -124,4 +125,8 @@ void TextField::setMaxCharLength(int l)
 string TextField::getText()
 {
 	return this->text.getText();
+}
+bool TextField::isActivated()
+{
+    return this->isActive;
 }

@@ -32,6 +32,8 @@
 HorizontalSlider::HorizontalSlider()
 {
 	this->bVal=0;
+	this->hasScrollButtonTriTex=false;
+	this->scrollButtonTex=0;
 }
 
 HorizontalSlider::~HorizontalSlider()
@@ -40,10 +42,10 @@ HorizontalSlider::~HorizontalSlider()
 	glDeleteVertexArrays(1,&this->VAOh);
 }
 
-void HorizontalSlider::create(float x, float y, float w, float h, int id)
+void HorizontalSlider::create(float x, float y, float w, float h)
 {
-	BaseControl::create(x,y,w,h,id);
-	this->scrollButton.create(x,y,w,h*0.1,-1);
+	BaseControl::create(x,y,w,h);
+	this->scrollButton.create(x,y,w,h*0.1);
 }
 void HorizontalSlider::draw(GLSLProgram& shader)
 {
@@ -70,7 +72,7 @@ void HorizontalSlider::setScrollButtonFrameColor(vec4 c)
 }
 
 
-void HorizontalSlider::mouseHover(int x, int y)
+bool HorizontalSlider::mouseHover(int x, int y)
 {
 	BaseControl::mouseHover(x,y);
 	if(this->mouseOver&&this->mouseButtonDown)
@@ -89,8 +91,16 @@ void HorizontalSlider::mouseHover(int x, int y)
 			this->bVal=1;
 		}
 
-		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1,-1);
+		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1);
+		this->scrollButton.setCollisionRect(vec4(this->collisionRect.x,this->collisionRect.y+yVal-this->y,this->width,this->height*0.1));
+		if(this->hasScrollButtonTriTex)
+		{
+			this->scrollButton.setTriTexture(this->scrollButtonTex);
+			this->scrollButton.handleLeftClick(x,y);
+		}
 	}
+	this->scrollButton.mouseHover(x,y);
+	return this->mouseOver;
 }
 
 void HorizontalSlider::handleLeftClick(int x, int y)
@@ -112,7 +122,14 @@ void HorizontalSlider::handleLeftClick(int x, int y)
 			this->bVal=1;
 		}
 
-		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1,-1);
+		this->scrollButton.create(this->x,yVal,this->width,this->height*0.1);
+		this->scrollButton.setCollisionRect(vec4(this->collisionRect.x,this->collisionRect.y+yVal-this->y,this->width,this->height*0.1));
+		if(this->hasScrollButtonTriTex)
+		{
+			this->scrollButton.setTriTexture(this->scrollButtonTex);
+			this->scrollButton.handleLeftClick(x,y);
+			this->scrollButton.mouseHover(x,y);
+		}
 	}
 }
 
@@ -137,7 +154,10 @@ void HorizontalSlider::setNormalizedSliderValue(float f)
 	{
 		yVal=this->y+this->height-this->height*0.1;
 	}
-	this->scrollButton.create(this->x,yVal,this->width,this->height*0.1,-1);
+	this->scrollButton.create(this->x,yVal,this->width,this->height*0.1);
+	this->scrollButton.setCollisionRect(vec4(this->collisionRect.x,this->collisionRect.y+yVal-this->y,this->width,this->height*0.1));
+	if(this->hasScrollButtonTriTex)
+		this->scrollButton.setTriTexture(this->scrollButtonTex);
 }
 void HorizontalSlider::setScrollButtonTexture(GLuint tex)
 {
@@ -146,4 +166,27 @@ void HorizontalSlider::setScrollButtonTexture(GLuint tex)
 void HorizontalSlider::hideScrollButtonFrame()
 {
 	this->scrollButton.hideFrame();
+}
+
+void HorizontalSlider::leftMBTNReleased()
+{
+     BaseControl::leftMBTNReleased();
+    this->scrollButton.leftMBTNReleased();
+}
+void HorizontalSlider::setScrollButtonTriTexture(GLuint tex)
+{
+	this->hasScrollButtonTriTex=true;
+	this->scrollButtonTex=tex;
+	this->scrollButton.setTriTexture(tex);
+}
+
+void HorizontalSlider::hide()
+{
+    BaseControl::hide();
+    this->scrollButton.hide();
+}
+void HorizontalSlider::show()
+{
+    BaseControl::show();
+    this->scrollButton.show();
 }

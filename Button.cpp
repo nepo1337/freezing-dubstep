@@ -39,18 +39,18 @@ Button::~Button()
 
 void Button::leftMBTNReleased()
 {
-	if(this->buttonDown)
+	if(this->mouseButtonDown)
 	{
 		this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
-		this->buttonDown=false;
+		this->released=true;
+		this->mouseButtonDown=false;
 	}
 }
 void Button::handleLeftClick(int x, int y)
 {
-	this->buttonDown=false;
+	BaseControl::handleLeftClick(x,y);
 	if(BaseControl::intersect(x, y))
 	{
-		this->buttonDown=true;
 		this->bgColor=vec4(1-this->bgColor.x,1-this->bgColor.y,1-this->bgColor.z,this->bgColor.w);
 	}
 }

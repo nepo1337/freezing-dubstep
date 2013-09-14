@@ -9,7 +9,7 @@ MeshHandler::MeshHandler()
 }
 MeshHandler::~MeshHandler()
 {
-
+	t.freeTextures();
 }
 
 
@@ -29,12 +29,33 @@ void MeshHandler::init()
 	cout<<this->meshShader.log()<<endl;
 	
 	this->meshShader.use();
-	this->meshShader.setUniform("tex",2);
+	this->meshShader.setUniform("tex",1);
 	this->meshShader.setUniform("drawWireframe",this->drawWireframe);
 	glUseProgram(0);
 	
-	TextureSet t;
-	t.create("textures/green","greenSet","grass_02.png","grass_07.png","dirt01.png","dirt_05.png");
+	
+	t.create("textures/green","greenSet");
+	sf::Image img;
+	string fn=t.getPath()+"/grass02.png";
+	img.loadFromFile(fn);
+	glActiveTexture(GL_TEXTURE0);
+	t.addTexture(TextureHandler::uploadTextureGFX(img),"grass02");
+	fn=t.getPath()+"/grass07.png";
+	img.loadFromFile(fn);
+	glActiveTexture(GL_TEXTURE1);
+	t.addTexture(TextureHandler::uploadTextureGFX(img),"grass07");
+	fn=t.getPath()+"/dirt01.png";
+	img.loadFromFile(fn);
+	glActiveTexture(GL_TEXTURE2);
+	t.addTexture(TextureHandler::uploadTextureGFX(img),"dirt01");
+	fn=t.getPath()+"/dirt05.png";
+	img.loadFromFile(fn);
+	glActiveTexture(GL_TEXTURE3);
+	t.addTexture(TextureHandler::uploadTextureGFX(img),"dirt05");
+	fn=t.getPath()+"/gravel01.png";
+	img.loadFromFile(fn);
+	glActiveTexture(GL_TEXTURE3);
+	t.addTexture(TextureHandler::uploadTextureGFX(img),"gravel01");
 	TextureHandler::addTextureSet(t);
 }
 

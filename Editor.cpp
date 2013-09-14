@@ -25,8 +25,12 @@ Editor::Editor()
     
 	this->mousedx=this->mousedy=0;
 	
+	this->createGui();
+}
+void Editor::createGui()
+{
 	sf::Image image;
-	image.loadFromFile("textures/green/dirt01small.png");
+	image.loadFromFile("textures/green/grass02small.png");
 	GLuint th=TextureHandler::uploadSimpleTexLinear(image);
 	sf::Image scimg;
 	scimg.loadFromFile("add.png");
@@ -70,8 +74,27 @@ Editor::Editor()
 
 	vS.create(10,75,90,10);
 	cB.create(5,10,15,15);
-	sP.create(10,90,90,90);
-	sP.setTriTexture(th);
+	displaySprite.create(150,40,150,150);
+	displaySprite.hide();
+	textureSprites[0].create(5,10,40,40);
+	textureSprites[0].setTriTexture(th);
+	image.loadFromFile("textures/green/grass07small.png");
+	th=TextureHandler::uploadSimpleTexLinear(image);
+	textureSprites[1].create(50,10,40,40);
+	textureSprites[1].setTriTexture(th);
+	image.loadFromFile("textures/green/dirt01small.png");
+	th=TextureHandler::uploadSimpleTexLinear(image);
+	textureSprites[2].create(95,10,40,40);
+	textureSprites[2].setTriTexture(th);
+	image.loadFromFile("textures/green/dirt05small.png");
+	th=TextureHandler::uploadSimpleTexLinear(image);
+	textureSprites[3].create(5,55,40,40);
+	textureSprites[3].setTriTexture(th);
+	image.loadFromFile("textures/green/gravel01small.png");
+	th=TextureHandler::uploadSimpleTexLinear(image);
+	textureSprites[4].create(50,55,40,40);
+	textureSprites[4].setTriTexture(th);
+	
 	hS.create(105,90,10,90);
 	gWin.create(20,40,150,40);
 	propsWin.create(20,80,150,160);
@@ -84,6 +107,7 @@ Editor::Editor()
 	toolsWindow.create(20,80,150,160);
 	toolsWindow.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
 	toolsWindow.setFrameColor(vec4(0.2,0.3,0.2,1.0));
+	toolsWindow.hide(); 
 	//fileWindow.hide();
 	gWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
 	gWin.setFrameColor(vec4(0.2,0.3,0.2,1.0));
@@ -93,6 +117,7 @@ Editor::Editor()
 	guiS.addWindow(toolsWindow);
 	guiS.addWindow(fileWindow);
 	gWin.addControl(gB);
+	gWin.addControl(displaySprite);
 	propsWin.addControl(cB);
 	propsWin.addControl(wireframeLabel);
 	fileWindow.addControl(textF);
@@ -102,6 +127,10 @@ Editor::Editor()
 	fileWindow.addControl(widthHeightLabel);
 	fileWindow.addControl(updateButton);
 	fileWindow.addControl(updateLabel);
+	for(int i=0;i<numTex;i++)
+	{
+		toolsWindow.addControl(textureSprites[i]);
+	}
 	gWin.addControl(fileButton);
 	gWin.addControl(textL);
 	gWin.addControl(propsButton);
@@ -112,6 +141,7 @@ Editor::Editor()
 
 	this->followWindow=false;
 }
+
 
 void Editor::run()
 {	
@@ -215,6 +245,15 @@ void Editor::run()
 		}
 		if(cB.wasReleased())
 			this->meshHandler.toggleWireframe();
+		this->displaySprite.hide();
+		for(int i=0;i<numTex;i++)
+		{
+			if(this->textureSprites[i].isHovered())
+			{
+				this->displaySprite.show();
+				this->displaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(i));
+			}
+		}
 		if(this->followWindow)
 		{
 			this->gWin.setPosition(vec2((float)sf::Mouse::getPosition(this->window).x+gWin.getClickOffset().x,(float)sf::Mouse::getPosition(this->window).y+gWin.getClickOffset().y));

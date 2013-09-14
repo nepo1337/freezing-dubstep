@@ -304,3 +304,7 @@ void BaseControl::setCollisionRect(vec4 rect)
 {
 	this->collisionRect=rect;
 }
+bool BaseControl::isHovered()
+{
+	return this->mouseOver;
+}

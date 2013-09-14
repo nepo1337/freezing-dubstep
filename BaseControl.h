@@ -73,6 +73,7 @@ public:
 	virtual bool isDown();
 	virtual bool wasReleased();
 	virtual bool isActivated();
+	virtual bool isHovered();
 	
 };
 

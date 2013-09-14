@@ -20,6 +20,7 @@ private:
 	GLSLProgram meshShader;
 	mat4 modelMatrix;
 	bool drawWireframe;
+	TextureSet t;
 public:
 	MeshHandler();
 	~MeshHandler();

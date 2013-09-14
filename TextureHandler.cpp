@@ -12,35 +12,11 @@ namespace TextureHandler
 				valid=false;
 		}
 		if(valid)
-		{
-			sf::Image img,img2,img3,img4;
-			valid = img.loadFromFile(set.getPath()+"/"+set.getTex1Name())&&img2.loadFromFile(set.getPath()+"/"+set.getTex2Name())&&img3.loadFromFile(set.getPath()+"/"+set.getTex3Name())&&img4.loadFromFile(set.getPath()+"/"+set.getTex4Name());
-			if(valid)
-			{
-				GLuint t1,t2,t3,t4;
-				glActiveTexture(GL_TEXTURE1);
-				t1=uploadTextureGFX(img);
-				glActiveTexture(GL_TEXTURE2);
-				t2=uploadTextureGFX(img2);
-				glActiveTexture(GL_TEXTURE3);
-				t3=uploadTextureGFX(img3);
-				glActiveTexture(GL_TEXTURE4);
-				t4=uploadTextureGFX(img4);
-				valid =t1&&t2&&t3&&t4;
-				if(valid)
-					set.setTextureIDs(t1,t2,t3,t4);
-				textureSets.push_back(set);
-			}
-		}
+			textureSets.push_back(set);
+		
 		return valid;
 	}
-	void freeOnceInEndOfMain()
-	{
-		for(int i=0;i<textureSets.size();i++)
-		{
-			glDeleteTextures(4,&textureSets[i].getTexHandles().front());
-		}
-	}
+
 	TextureSet getTextureSet(int index)
 	{
 		TextureSet set = textureSets[0];

@@ -23,6 +23,7 @@ using namespace std;
 class Editor
 {
 private:
+	const int numTex=5;
 	sf::ContextSettings settings;
 	sf::Window window;
 	sf::Clock clock;
@@ -35,12 +36,13 @@ private:
 	Button gB,fileButton,propsButton,toolsButton,updateButton;
 	VerticalSlider vS;
 	CheckBox cB;
-	Sprite sP;
+	Sprite textureSprites[5], displaySprite;
 	HorizontalSlider hS;
 	TextLabel textL,propsLabel,toolLabel,wireframeLabel,nameLabel,widthHeightLabel,updateLabel;
 	TextField textF,mapWidth,mapHeight;
 	//void handleGUIEvents(EventTraveller t);
 	bool followWindow;
+	void createGui();
 public:
 	Editor();
 	void run();

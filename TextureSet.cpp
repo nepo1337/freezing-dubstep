@@ -2,42 +2,22 @@
 
 TextureSet::TextureSet()
 {
-    this->tex1=this->tex2=this->tex3=this->tex4=0;
-    this->name1=this->name2=this->name3=this->name4="NONE";
+	this->path="";
+	this->textureSetname="";
 }
 TextureSet::~TextureSet()
 {
-
 }
-void TextureSet::create(string path, string tsn, string n1, string n2, string n3, string n4)
+void TextureSet::create(string path, string tsn)
 {
     this->path=path;
     this->textureSetname=tsn;
-    this->name1=n1;
-    this->name2=n2;
-    this->name3=n3;
-    this->name4=n4;
 }
 string TextureSet::getPath()
 {
     return this->path;
 }
-GLuint TextureSet::getTex1H()
-{
-    return this->tex1;
-}
-GLuint TextureSet::getTex2H()
-{
-    return this->tex2;
-}
-GLuint TextureSet::getTex3H()
-{
-    return this->tex3;
-}
-GLuint TextureSet::getTex4H()
-{
-    return this->tex4;
-}
+
 string TextureSet::getTextureSetName()
 {
     return this->textureSetname;
@@ -46,36 +26,36 @@ vector< GLuint > TextureSet::getTexHandles()
 {
     return this->texHandels;
 }
-string TextureSet::getTex1Name()
-{
-    return this->name1;
-}
-string TextureSet::getTex2Name()
-{
-    return this->name2;
-}
-string TextureSet::getTex3Name()
-{
-    return this->name3;
-}
-string TextureSet::getTex4Name()
-{
-    return this->name4;
-}
-void TextureSet::setTextureIDs(GLuint t1, GLuint t2, GLuint t3, GLuint t4)
-{
-    this->tex1=t1;
-    this->tex2=t2;
-    this->tex3=t3;
-    this->tex4=t4;
 
-    this->texHandels.push_back(this->tex1);
-    this->texHandels.push_back(this->tex2);
-    this->texHandels.push_back(this->tex3);
-    this->texHandels.push_back(this->tex4);
+void TextureSet::addTexture(GLuint t,string name)
+{
+	this->textureNames.push_back(name);
+	this->texHandels.push_back(t);
 }
-
-
-
-
+GLuint TextureSet::getTexHandle(int i)
+{
+	GLuint t=-1;
+	if(i>=0&&i<this->texHandels.size())
+	{
+		t=this->texHandels[i];
+	}
+	return t;
+}
+GLuint TextureSet::getTexHandle(string s)
+{
+	GLuint t=-1;
+	for(int i=0;i<this->textureNames.size()||t>-1;i++)
+	{
+		if(this->textureNames[i]==s)
+			t=i;
+	}
+	return t;
+}
+void TextureSet::freeTextures()
+{
+	for(int i=0;i<texHandels.size();i++)
+	{
+		glDeleteTextures(this->texHandels.size(),&texHandels[0]);
+	}
+}
 

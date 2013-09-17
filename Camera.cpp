@@ -4,8 +4,8 @@
 
 Camera::Camera()
 {
-    this->eye=vec3(2.0f,2.0f,0.0f);
-    this->lookat=vec3(0.0f,0.0f,0.0f);
+    this->eye=vec3(0.0f,0.0f,0.0f);
+    this->lookat=vec3(1.0f,0.0f,1.0f);
     this->up=vec3(0.0f,1.0f,0.0f);
     this->viewMatrix=mat4(1.0f);
     this->rotx=0;
@@ -18,6 +18,9 @@ Camera::Camera()
     this->eye.z=sin(rotz*PI/180)*cos(roty*PI/180)*this->distance+this->lookat.z;
     this->calcViewMatrix();
     this->updateProjectionMatrix(2,2);
+    
+    this->wHeight=0;
+    this->wWidth=0;
 }
 
 Camera::~Camera()
@@ -183,6 +186,9 @@ void Camera::updateProjectionMatrix(int width, int height)
                            vec4(0.0f,h2,0.0f,0.0f),
                            vec4(0.0f,0.0f,1.0f,0.0f),
                            vec4(w2+0, h2+0, 0.0f, 1.0f));
+    
+    this->wWidth=width;
+    this->wHeight=height;
 }
 mat4 Camera::getCombinedVPMatrix()
 {
@@ -195,5 +201,17 @@ mat4 Camera::getProjectionMatrix()
 mat4 Camera::getViewportMatrix()
 {
     return this->viewportMatrix;
+}
+vec3 Camera::getClickRay(int x, int y)
+{
+	float normalisedx = 2 * (float)x / this->wWidth - 1;
+	float normalisedy = 1 - 2 * (float)y / this->wHeight;
+	mat4 unview = inverse(this->projectionMatrix*this->viewMatrix);
+	vec4 near_point = unview * vec4(normalisedx, normalisedy, 0, 1);
+	//the last vec3 is the pos of the camera
+	vec3 t = vec3(near_point.x/near_point.w,near_point.y/near_point.w,near_point.z/near_point.w)-this->eye;
+	vec3 rayd = normalize(t);
+	
+	return rayd;
 }
 

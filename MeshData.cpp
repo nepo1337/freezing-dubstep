@@ -70,6 +70,13 @@ GLuint getVAOh(int i, int j)
 {
     return mesh[i][j].getVAOh();
 }
-
+GLuint getBlendTexHandle(int i, int j)
+{
+	return mesh[i][j].getBlendmapHandle();
+}
+Mesh* getMesh(int i, int j)
+{
+	return &mesh[i][j];
+}
 
 }

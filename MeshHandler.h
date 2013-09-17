@@ -12,6 +12,7 @@
 #include "TextureSet.h"
 #include "TextureHandler.h"
 #include "MeshData.h"
+#include "Brush.h"
 
 class MeshHandler
 {
@@ -30,6 +31,7 @@ public:
 	void windowResizedUpdate();
 	void toggleWireframe();
 	void setWidthHeight(int w, int h);
+	void paintMesh(Brush b,vec3 origin, vec3 direction);
 };
 
 #endif

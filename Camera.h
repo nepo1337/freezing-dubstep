@@ -18,6 +18,7 @@ private:
     void calcViewMatrix();
     float rotx,roty,rotz;
     float distance;
+    int wWidth,wHeight;
 public:
     Camera();
     ~Camera();
@@ -37,6 +38,7 @@ public:
     mat4 getProjectionMatrix();
     mat4 getCombinedVPMatrix();
     mat4 getViewportMatrix();
+    vec3 getClickRay(int x, int y);
 
 };
 

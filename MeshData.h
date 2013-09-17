@@ -10,5 +10,7 @@ namespace MeshData
 	int getWidth();
 	int getHeight();
 	GLuint getVAOh(int i, int j);
+	GLuint getBlendTexHandle(int i,int j);
+	Mesh* getMesh(int i,int j);
 }
 #endif

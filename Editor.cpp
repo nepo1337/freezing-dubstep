@@ -31,7 +31,7 @@ void Editor::createGui()
 {
 	sf::Image image;
 	image.loadFromFile("textures/green/grass02small.png");
-	GLuint th=TextureHandler::uploadSimpleTexLinear(image);
+	GLuint th=TextureHandler::uploadTextureGFX(image);
 	sf::Image scimg;
 	scimg.loadFromFile("add.png");
 	GLuint ball = TextureHandler::uploadSimpleTexLinear(scimg);
@@ -60,6 +60,11 @@ void Editor::createGui()
 	updateLabel.create(5,90,0,15,f,fontH);
 	updateLabel.setText("Update");
 	
+	toolTextureLabel.create(5,10,0,15,f,fontH);
+	toolTextureLabel.setText("Textures:");
+	toolRadiusLabel.create(5,220,0,15,f,fontH);
+	toolRadiusLabel.setText("Radius");
+	
 	textF.create(5,25,140,15,f,fontH);
 	mapWidth.create(10,60,40,15,f,fontH);
 	mapWidth.setText("1");
@@ -73,26 +78,31 @@ void Editor::createGui()
 	updateButton.create(5,90,60,15);
 
 	vS.create(10,75,90,10);
+	toolRadiusSlider.create(5,240,80,10);
+	toolRadiusSlider.setNormalizedSliderValue(0.5);
+	this->brush.setRadius(toolRadiusSlider.getNormalizedSliderValue()*9+1);
 	cB.create(5,10,15,15);
 	displaySprite.create(150,40,150,150);
 	displaySprite.hide();
-	textureSprites[0].create(5,10,40,40);
+	smallDisplaySprite.create(80,5,25,25);
+	smallDisplaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(0));
+	textureSprites[0].create(5,35,40,40);
 	textureSprites[0].setTriTexture(th);
 	image.loadFromFile("textures/green/grass07small.png");
-	th=TextureHandler::uploadSimpleTexLinear(image);
-	textureSprites[1].create(50,10,40,40);
+	th=TextureHandler::uploadTextureGFX(image);
+	textureSprites[1].create(50,35,40,40);
 	textureSprites[1].setTriTexture(th);
 	image.loadFromFile("textures/green/dirt01small.png");
-	th=TextureHandler::uploadSimpleTexLinear(image);
-	textureSprites[2].create(95,10,40,40);
+	th=TextureHandler::uploadTextureGFX(image);
+	textureSprites[2].create(95,35,40,40);
 	textureSprites[2].setTriTexture(th);
 	image.loadFromFile("textures/green/dirt05small.png");
-	th=TextureHandler::uploadSimpleTexLinear(image);
-	textureSprites[3].create(5,55,40,40);
+	th=TextureHandler::uploadTextureGFX(image);
+	textureSprites[3].create(5,80,40,40);
 	textureSprites[3].setTriTexture(th);
 	image.loadFromFile("textures/green/gravel01small.png");
-	th=TextureHandler::uploadSimpleTexLinear(image);
-	textureSprites[4].create(50,55,40,40);
+	th=TextureHandler::uploadTextureGFX(image);
+	textureSprites[4].create(50,80,40,40);
 	textureSprites[4].setTriTexture(th);
 	
 	hS.create(105,90,10,90);
@@ -104,9 +114,13 @@ void Editor::createGui()
 	fileWindow.create(20,80,150,160);
 	fileWindow.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
 	fileWindow.setFrameColor(vec4(0.2,0.3,0.2,1.0));
-	toolsWindow.create(20,80,150,160);
+	toolsWindow.create(20,80,150,300);
 	toolsWindow.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
 	toolsWindow.setFrameColor(vec4(0.2,0.3,0.2,1.0));
+	toolsWindow.addControl(toolTextureLabel);
+	toolsWindow.addControl(smallDisplaySprite);
+	toolsWindow.addControl(toolRadiusLabel);
+	toolsWindow.addControl(toolRadiusSlider);
 	toolsWindow.hide(); 
 	//fileWindow.hide();
 	gWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
@@ -193,6 +207,7 @@ void Editor::run()
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 				cam.moveForeward(0.2);
 
+
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 				cam.moveBackward(0.2);
 			
@@ -206,6 +221,11 @@ void Editor::run()
 			{
 				cam.rotateLeft(mousedx-sf::Mouse::getPosition(this->window).x);
 				cam.rotateUp(mousedy-sf::Mouse::getPosition(this->window).y);
+			}
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if(!this->toolsWindow.isHovered())
+					this->meshHandler.paintMesh(this->brush,cam.getPos(),cam.getClickRay(sf::Mouse::getPosition(this->window).x,sf::Mouse::getPosition(this->window).y));
 			}
 		}
 		
@@ -245,6 +265,9 @@ void Editor::run()
 		}
 		if(cB.wasReleased())
 			this->meshHandler.toggleWireframe();
+		
+		if(toolRadiusSlider.wasReleased())
+			brush.setRadius(1+toolRadiusSlider.getNormalizedSliderValue()*9);
 		this->displaySprite.hide();
 		for(int i=0;i<numTex;i++)
 		{
@@ -252,6 +275,11 @@ void Editor::run()
 			{
 				this->displaySprite.show();
 				this->displaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(i));
+				if(this->textureSprites[i].wasReleased())
+				{
+					this->brush.setBrushTexture(i);
+					this->smallDisplaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(i));
+				}
 			}
 		}
 		if(this->followWindow)

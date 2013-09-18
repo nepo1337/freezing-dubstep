@@ -22,6 +22,7 @@ private:
 	mat4 modelMatrix;
 	bool drawWireframe;
 	TextureSet t;
+	int lastTouchedIndexX,lastTouchedIndexY;
 public:
 	MeshHandler();
 	~MeshHandler();
@@ -32,6 +33,8 @@ public:
 	void toggleWireframe();
 	void setWidthHeight(int w, int h);
 	void paintMesh(Brush b,vec3 origin, vec3 direction);
+	void changeMeshHeight(vec3 origin, vec3 direction,float m);
+	void createRamp(vec3 origin, vec3 direction,float m);
 };
 
 #endif

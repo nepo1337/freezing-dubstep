@@ -18,14 +18,14 @@ Editor::Editor()
 	glClearColor(0.2,0.4,0.6,0.0);
 
 	this->meshHandler.init();
-	this->meshHandler.setWidthHeight(1,1);
+	this->meshHandler.setWidthHeight(5,5);
 	this->meshHandler.setCamera(&this->cam);
 	cam.updateProjectionMatrix(800,600);
 	this->meshHandler.windowResizedUpdate();
-    
 	this->mousedx=this->mousedy=0;
 	
 	this->createGui();
+	this->editState = editTool::PAINT;
 }
 void Editor::createGui()
 {
@@ -63,7 +63,7 @@ void Editor::createGui()
 	toolTextureLabel.create(5,10,0,15,f,fontH);
 	toolTextureLabel.setText("Textures:");
 	toolRadiusLabel.create(5,220,0,15,f,fontH);
-	toolRadiusLabel.setText("Radius");
+	toolRadiusLabel.setText("Radius      Speed");
 	
 	textF.create(5,25,140,15,f,fontH);
 	mapWidth.create(10,60,40,15,f,fontH);
@@ -77,10 +77,11 @@ void Editor::createGui()
 	toolsButton.create(90,20,60,20);
 	updateButton.create(5,90,60,15);
 
-	vS.create(10,75,90,10);
-	toolRadiusSlider.create(5,240,80,10);
+	toolPaintSpeedSlider.create(75,240,50,10);
+	toolRadiusSlider.create(5,240,50,10);
 	toolRadiusSlider.setNormalizedSliderValue(0.5);
 	this->brush.setRadius(toolRadiusSlider.getNormalizedSliderValue()*9+1);
+	this->brush.setPaintSpeed(toolPaintSpeedSlider.getNormalizedSliderValue()*4+1);
 	cB.create(5,10,15,15);
 	displaySprite.create(150,40,150,150);
 	displaySprite.hide();
@@ -104,6 +105,31 @@ void Editor::createGui()
 	th=TextureHandler::uploadTextureGFX(image);
 	textureSprites[4].create(50,80,40,40);
 	textureSprites[4].setTriTexture(th);
+	image.loadFromFile("textures/green/grass05small.png");
+	th=TextureHandler::uploadTextureGFX(image);
+	textureSprites[5].create(95,80,40,40);
+	textureSprites[5].setTriTexture(th);
+	
+	
+	raiseButton.create(5,260,15,15);
+	image.loadFromFile("textures/green/raise.png");
+	th = TextureHandler::uploadTextureGFX(image);
+	raiseButton.setTriTexture(th);
+	
+	lowerButton.create(25,260,15,15);
+	image.loadFromFile("textures/green/lower.png");
+	th = TextureHandler::uploadTextureGFX(image);
+	lowerButton.setTriTexture(th);
+	
+	raiseRampButton.create(45,260,15,15);
+	image.loadFromFile("textures/green/raiseRamp.png");
+	th = TextureHandler::uploadTextureGFX(image);
+	raiseRampButton.setTriTexture(th);
+	
+	lowerRampButton.create(65,260,15,15);
+	image.loadFromFile("textures/green/lowerRamp.png");
+	th = TextureHandler::uploadTextureGFX(image);
+	lowerRampButton.setTriTexture(th);
 	
 	hS.create(105,90,10,90);
 	gWin.create(20,40,150,40);
@@ -121,6 +147,11 @@ void Editor::createGui()
 	toolsWindow.addControl(smallDisplaySprite);
 	toolsWindow.addControl(toolRadiusLabel);
 	toolsWindow.addControl(toolRadiusSlider);
+	toolsWindow.addControl(toolPaintSpeedSlider);
+	toolsWindow.addControl(raiseButton);
+	toolsWindow.addControl(lowerButton);
+	toolsWindow.addControl(raiseRampButton);
+	toolsWindow.addControl(lowerRampButton);
 	toolsWindow.hide(); 
 	//fileWindow.hide();
 	gWin.setBackgroundColor(vec4(0.4,0.8,0.4,0.7));
@@ -225,7 +256,22 @@ void Editor::run()
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
 				if(!this->toolsWindow.isHovered())
-					this->meshHandler.paintMesh(this->brush,cam.getPos(),cam.getClickRay(sf::Mouse::getPosition(this->window).x,sf::Mouse::getPosition(this->window).y));
+				{
+					int xx=sf::Mouse::getPosition(this->window).x;
+					int yy=sf::Mouse::getPosition(this->window).y;
+					if(this->editState==editTool::PAINT)
+						this->meshHandler.paintMesh(this->brush,cam.getPos(),cam.getClickRay(xx,yy));
+				
+					if(this->editState==editTool::RAISE)
+						this->meshHandler.changeMeshHeight(cam.getPos(),cam.getClickRay(xx,yy),1);
+					if(this->editState==editTool::LOWER)
+						this->meshHandler.changeMeshHeight(cam.getPos(),cam.getClickRay(xx,yy),-1);
+					if(this->editState==editTool::RAISERAMP)
+						this->meshHandler.createRamp(cam.getPos(),cam.getClickRay(xx,yy),1);
+					if(this->editState==editTool::LOWERRAMP)
+						this->meshHandler.createRamp(cam.getPos(),cam.getClickRay(xx,yy),-1);
+					
+				}
 			}
 		}
 		
@@ -268,6 +314,9 @@ void Editor::run()
 		
 		if(toolRadiusSlider.wasReleased())
 			brush.setRadius(1+toolRadiusSlider.getNormalizedSliderValue()*9);
+		if(toolPaintSpeedSlider.wasReleased())
+			this->brush.setPaintSpeed(toolPaintSpeedSlider.getNormalizedSliderValue()*4+1);
+		
 		this->displaySprite.hide();
 		for(int i=0;i<numTex;i++)
 		{
@@ -277,11 +326,22 @@ void Editor::run()
 				this->displaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(i));
 				if(this->textureSprites[i].wasReleased())
 				{
+					this->editState=editTool::PAINT;
 					this->brush.setBrushTexture(i);
 					this->smallDisplaySprite.setTexture(TextureHandler::getTextureSet(0).getTexHandle(i));
 				}
 			}
 		}
+		if(raiseButton.wasReleased())
+		{
+			this->editState=editTool::RAISE;
+		}
+		if(lowerButton.wasReleased())
+			this->editState=editTool::LOWER;
+		if(raiseRampButton.wasReleased())
+			this->editState=editTool::RAISERAMP;
+		if(this->lowerRampButton.wasReleased())
+			this->editState=editTool::LOWERRAMP;
 		if(this->followWindow)
 		{
 			this->gWin.setPosition(vec2((float)sf::Mouse::getPosition(this->window).x+gWin.getClickOffset().x,(float)sf::Mouse::getPosition(this->window).y+gWin.getClickOffset().y));

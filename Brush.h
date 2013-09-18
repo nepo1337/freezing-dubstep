@@ -39,6 +39,7 @@ class Brush
 {
 private:
 	float radius;
+	float paintSpeed;
 	BrushType::type brushType;
 	GLuint paintTex;
 public:
@@ -50,6 +51,8 @@ public:
 	BrushType::type getBrushType();
 	void setBrushTexture(GLuint t);
 	GLuint getBrushTexture();
+	void setPaintSpeed(float f);
+	int getPaintSpeed();
 };
 
 #endif // BRUSH_H

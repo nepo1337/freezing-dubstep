@@ -34,7 +34,7 @@ public:
 	void freeGFX();
 	GLuint getVAOh();
 	void setPosition(vec3 v);
-	bool updateMesh(vector<Quad> polys);
+	bool updateMesh();
 	int getNrOfVertices();
 	GLuint getBlendmapHandle();
 	void updateGFXBlendmap();
@@ -42,6 +42,10 @@ public:
 	int *getBlendmapIndecis();
 	void setBlendmapIndex(int i, int v);
 	vec3 rayIntersectMeshTriangle(vec3 origin, vec3 direction);
+	vec3 rayIntersectMeshTriangle(vec3 origin, vec3 direction,int &ai, int &bi);
+	float getQuadHeight(int i, int j);
+	void setQuadheight(int i, int j, float h);
+	void createRamp(int i, int j, Orientation::Orientations o, float h);
 };
 
 #endif // MESH_H

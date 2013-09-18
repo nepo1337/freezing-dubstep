@@ -33,6 +33,7 @@ Brush::Brush()
 	this->radius=1.0f;
 	this->brushType=BrushType::CIRCLE;
 	this->paintTex=0;
+	this->paintSpeed=1;
 }
 Brush::~Brush()
 {
@@ -63,5 +64,13 @@ void Brush::setBrushTexture(GLuint t)
 	this->paintTex=t;
 }
 
+int Brush::getPaintSpeed()
+{
+	return this->paintSpeed;
+}
 
+void Brush::setPaintSpeed(float f)
+{
+	this->paintSpeed=f;
+}
 

@@ -103,7 +103,7 @@ void Mesh::uploadToGFX()
         glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,0,NULL);
         glBindVertexArray(0);
         this->uploaded=true;
-	this->blendMap.create(32,32,sf::Color(255,0,0,0));
+	this->blendMap.create(20,20,sf::Color(255,0,0,0));
 	
 	this->updateGFXBlendmap();
     }
@@ -146,24 +146,24 @@ void Mesh::paintBlendmap(float i, float j, Brush b)
 	}
 	//updates the blendmap based on what texture is used
 	
-	int lk=i*3.2-b.getRadius();
+	int lk=i*2.0-b.getRadius();
 	if(lk<0)
 		lk=0;
-	int tk =i*3.2+b.getRadius();
-	if(tk>32)
-		tk=32;
-	int ll=j*3.2-b.getRadius();
+	int tk =i*2.0+b.getRadius();
+	if(tk>20)
+		tk=20;
+	int ll=j*2.0-b.getRadius();
 	if(ll<0)
 		ll=0;
-	int tl=j*3.2+b.getRadius();
-	if(tl>32)
-		tl=32;
+	int tl=j*2.0+b.getRadius();
+	if(tl>20)
+		tl=20;
 	for(int k=lk;k<tk;k++)
 	{
 		for(int l=ll;l<tl;l++)
 		{
 
-			float dist = sqrt(((i*3.2)-k)*((i*3.2)-k)+((j*3.2)-l)*((j*3.2)-l));
+			float dist = sqrt(((i*2.0)-k)*((i*2.0)-k)+((j*2.0)-l)*((j*2.0)-l));
 			this->increasePixelPaint(k,l,b, index,dist);
 
 		}
@@ -192,7 +192,7 @@ void Mesh::increasePixelPaint(int i, int j, Brush b, int index, float distance)
 		r=0.5;
 	}
 	
-	pixBlends[index]+=r*20;
+	pixBlends[index]+=r*20*b.getPaintSpeed();
 
 	sum=pixBlends[0]+pixBlends[1]+pixBlends[2]+pixBlends[3];
 	pix.r=(pixBlends[0]/sum)*255;
@@ -292,30 +292,21 @@ void Mesh::getVboArrays(Quad mesh[][WIDTH],vector<float> &verts, vector<float> &
     }
 
 }
-bool Mesh::updateMesh(vector<Quad> polys)
+bool Mesh::updateMesh()
 {
     if(this->uploaded)
     {
-        int c=0;
-        for(int i=0; i<HEIGHT; i++)
-        {
-            for(int j=0; j<WIDTH; j++)
-            {
-                this->topMesh[i][j]=polys[c];
-                c++;
-            }
-        }
         vector<float> verts;
         vector<float> normals;
 
         this->getVboArrays(this->topMesh,verts,normals);
         this->nrOfVertices=verts.size()/3;
-        /*
-        glBindBuffer(GL_ARRAY_BUFFER, this->VBOv);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, this->VBO[0]);
         glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(float)*verts.size(),&verts.front());
-        glBindBuffer(GL_ARRAY_BUFFER, this->VBOn);
+        glBindBuffer(GL_ARRAY_BUFFER, this->VBO[1]);
         glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(float)*normals.size(),&normals.front());
-        */
+        
     }
     return this->uploaded;
 }
@@ -324,6 +315,32 @@ int Mesh::getNrOfVertices()
 {
     return this->nrOfVertices;
 }
+float Mesh::getQuadHeight(int i, int j)
+{
+	if(i>=0&&j>=0&&i<WIDTH&&j<HEIGHT)
+	{
+		return this->topMesh[i][j].getHeight();
+	}
+	return this->topMesh[0][0].getHeight();
+}
+void Mesh::setQuadheight(int i, int j, float h)
+{
+	if(i>=0&&j>=0&&i<WIDTH&&j<HEIGHT)
+	{
+		this->topMesh[i][j].setHeight(h);
+	}
+	this->updateMesh();
+}
+void Mesh::createRamp(int i, int j, Orientation::Orientations o, float h)
+{
+	if(i>=0&&j>=0&&i<WIDTH&&j<HEIGHT)
+	{
+		this->topMesh[i][j].createRamp(o,h);
+	}
+	this->updateMesh();
+}
+
+
 
 vec3 Mesh::rayIntersectMeshTriangle(vec3 origin, vec3 direction)
 {
@@ -431,3 +448,114 @@ vec3 Mesh::rayIntersectMeshTriangle(vec3 origin, vec3 direction)
 		hit=vec3(-1,-1,-1);
 	return hit;
 }
+vec3 Mesh::rayIntersectMeshTriangle(vec3 origin, vec3 direction,int &ai, int &bi)
+{
+	bool pass=true;
+	bool found=false;
+	vec3 hit;
+	for(int i=0;i<HEIGHT&&!found;i++)
+	{
+		for(int j=0;j<WIDTH&&!found;j++)
+		{
+			//for saving the closest target
+			float lowestY=999999.0f;
+
+			pass=true;
+			vec3 p0=this->topMesh[i][j].getFace1().v1;
+			vec3 p1=this->topMesh[i][j].getFace1().v2;
+			vec3 p2=this->topMesh[i][j].getFace1().v3;
+			
+			vec3 e1 = p1-p0;
+			vec3 e2 = p2-p0;
+			vec3 q = cross(direction,e2);
+			float a = dot(e1,q);
+			
+			if(a>-0.00000001&&a<0.00000001)
+			{
+				pass=false;
+			}
+			if(pass)
+			{
+				float f = 1/a;
+				vec3 s = origin-p0;
+				float u = f*dot(s,q);
+				if(u<0.0)
+				{
+					pass=false;
+				}
+				if(pass)
+				{
+					vec3 r = cross(s,e1);
+					float v = f*dot(direction,r);
+					if(v<0.0 || u+v>1.0)
+					{
+						pass=false;
+					}
+					if(pass)
+					{
+						float t=f*dot(e2,r);
+						if(t<lowestY)
+						{
+							hit=vec3(v,t,u);
+							ai=i;
+							bi=j;
+						}
+						found=true;
+					}
+				}
+			}
+			
+			if(!found)
+			{
+				pass=true;
+			vec3 p0=this->topMesh[i][j].getFace2().v1;
+			vec3 p1=this->topMesh[i][j].getFace2().v2;
+			vec3 p2=this->topMesh[i][j].getFace2().v3;
+			
+			vec3 e1 = p1-p0;
+			vec3 e2 = p2-p0;
+			vec3 q = cross(direction,e2);
+			float a = dot(e1,q);
+			
+			if(a>-0.00000001&&a<0.00000001)
+			{
+				pass=false;
+			}
+			if(pass)
+			{
+				float f = 1/a;
+				vec3 s = origin-p0;
+				float u = f*dot(s,q);
+				if(u<0.0)
+				{
+					pass=false;
+				}
+				if(pass)
+				{
+					vec3 r = cross(s,e1);
+					float v = f*dot(direction,r);
+					if(v<0.0 || u+v>1.0)
+					{
+						pass=false;
+					}
+					if(pass)
+					{
+						float t=f*dot(e2,r);
+						if(t<lowestY)
+						{
+							hit=vec3(1-v,t,1-u);
+							ai=i;
+							bi=j;
+						}
+						found=true;
+					}
+				}
+			}
+			}
+		}
+	}
+	if(!found)
+		hit=vec3(-1,-1,-1);
+	return hit;
+}
+

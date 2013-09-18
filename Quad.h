@@ -8,11 +8,19 @@
 
 using namespace std;
 
+namespace Orientation
+{
+	enum Orientations
+	{
+		NORTH,SOUTH,WEST,EAST
+	};
+};
 class Quad
 {
 private:
 	Face f1,f2;
 	vec3 centerPosition;
+	float height;
 public:
 	Quad();
 	~Quad();
@@ -21,6 +29,9 @@ public:
 	Face& getFace1();
 	Face& getFace2();
 	void createFaces();
+	float getHeight();
+	void setHeight(float h);
+	void createRamp(Orientation::Orientations o,float h);
 };
 
 #endif // QUAD_H
